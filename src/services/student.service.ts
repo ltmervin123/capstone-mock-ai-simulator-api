@@ -1,8 +1,18 @@
 import StudentModel from '../models/student.model';
-import { Student as StudentType } from '../zod-schemas/student.zod.schema';
+import QueueService from '../queue';
+import { verificationToken } from '../utils/jwt';
+import { verificationURL } from '../utils/url';
+import { type Student as StudentType } from '../zod-schemas/student.zod.schema';
 
-export const signupStudent = async (studentData: StudentType): Promise<void> => {
+export const signup = async (studentData: StudentType): Promise<void> => {
   await StudentModel.signup(studentData);
 
-  //Push email to queue for sending verification email to student
+  const token = verificationToken(studentData.email);
+
+  const url = verificationURL(token);
+
+  await QueueService.getInstance('email-service').addJob('verification-email', {
+    to: studentData.email,
+    url,
+  });
 };
