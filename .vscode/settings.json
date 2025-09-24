@@ -3,21 +3,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.validate": ["javascript"],
-  "files.associations": {
-    "*.controller.ts": "typescript",
-    "*.service.ts": "typescript",
-    "*.schema.ts": "typescript",
-    "*.model.ts": "typescript",
-    "*.config.ts": "typescript",
-    "*.route.ts": "typescript"
-  },
-  "material-icon-theme.files.associations": {
-    "*.controller.ts": "typescript",
-    "*.service.ts": "typescript",
-    "*.schema.ts": "typescript",
-    "*.model.ts": "typescript",
-    "*.config.ts": "typescript",
-    "*.route.ts": "typescript"
-  }
+  "eslint.validate": ["javascript"]
 }

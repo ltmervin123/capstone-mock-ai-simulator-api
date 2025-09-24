@@ -2,7 +2,7 @@ import StudentModel from '../models/student.model';
 import QueueService from '../queue';
 import { verificationToken } from '../utils/jwt';
 import { verificationURL } from '../utils/url';
-import { type Student as StudentType } from '../zod-schemas/student.zod.schema';
+import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 
 export const signup = async (studentData: StudentType): Promise<void> => {
   await StudentModel.signup(studentData);

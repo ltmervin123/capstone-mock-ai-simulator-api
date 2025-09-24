@@ -1,6 +1,6 @@
 import mongoose, { Model } from 'mongoose';
 import studentSchema from '../db-schemas/student.schema';
-import type { Student as StudentType } from '../zod-schemas/student.zod.schema';
+import type { Student as StudentType } from '../zod-schemas/student-zod-schema';
 import { ConflictError } from '../utils/errors';
 import { generateHash } from '../utils/bcrypt';
 

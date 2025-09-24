@@ -1,5 +1,5 @@
 import { Queue, Job, JobsOptions } from 'bullmq';
-import RedisConnection from './configs/redis.config';
+import RedisConnection from './configs/redis-config';
 import logger from './utils/logger';
 
 class QueueService {

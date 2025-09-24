@@ -2,9 +2,9 @@ import express, { type Application } from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import logger from './utils/logger';
-import mongoDB from './configs/mongodb.config';
-import authRoutes from './routes/auth.route';
-import { errorHandler } from './middlewares/error.handler';
+import mongoDB from './configs/mongodb-config';
+import authRoutes from './routes/auth-route';
+import { errorHandler } from './middlewares/error-handler';
 import { CONFIG } from './utils/constant-value';
 
 const BASE_API = '/api/v1';
