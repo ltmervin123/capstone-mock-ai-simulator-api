@@ -1,17 +1,23 @@
 import express, { Request, Response, Application } from 'express';
 import 'dotenv/config';
 import cors from 'cors';
-
+import logger from './src/utils/logger';
+import mongoDB from './src/config/mongodb-config';
+import { CONFIG } from './src/utils/constant-value';
+const { PORT } = CONFIG;
 const app: Application = express();
-const PORT: number = parseInt(process.env.PORT || '5000', 10);
-
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response): void => {
-  res.send('Backend is running!');
-});
+const startApp = async () => {
+  try {
+    await mongoDB.initializeConnection();
+    logger.info(`Server running on port ${PORT}`);
+  } catch (error: unknown) {
+    logger.error(`Failed to start server: ${(error as Error).message}`);
+  }
+};
 
-app.listen(PORT, (): void => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(async (): Promise<void> => {
+  await startApp();
 });
