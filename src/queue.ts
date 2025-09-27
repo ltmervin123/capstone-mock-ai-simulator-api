@@ -30,7 +30,7 @@ class QueueService {
     data: T,
     options?: JobsOptions
   ): Promise<Job<T, unknown, string>> {
-    logger.info(`✅ Job added: ${jobName} Job Data: ${JSON.stringify(data)}`);
+    logger.info(`✅ Job added: ${jobName} Job Data: ${JSON.stringify(data, null, 2)}`);
     return await this.queue.add(jobName, data, options);
   }
 }

@@ -45,22 +45,19 @@ class RedisConnection {
     if (!this.connection) return;
 
     this.connection.on('connect', () => {
-      logger.info(`🔗 Redis Connection Details:
-        Host: ${this.HOST}
-        Port: ${this.PORT}
-      `);
+      logger.info(`Redis Connection Details - [Host: ${this.HOST}] - [Port: ${this.PORT}]`);
     });
 
     this.connection.on('error', (err: Error) => {
-      logger.error('❌ Redis connection error:', err);
+      logger.error('Redis connection error:', err);
     });
 
     this.connection.on('reconnecting', () => {
-      logger.info('🔄 Reconnecting to Redis...');
+      logger.info('Reconnecting to Redis...');
     });
 
     this.connection.on('close', () => {
-      logger.warn('⚠️ Redis connection closed');
+      logger.warn('Redis connection closed');
     });
   }
 

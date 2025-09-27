@@ -33,41 +33,36 @@ class DbConfig {
     try {
       await mongoose.connect(this.mongodbUrl, this.config);
 
-      logger.info(`🛢 Database connected successfully`, {
-        service: 'MongoDB',
-        name: 'MongoConnection',
-      });
+      logger.info(`Connected to mongoDB`);
 
       this.#handleConnectionEvents();
     } catch (error: unknown) {
-      throw new DatabaseError(`❌ Mongoose connection failed ${(error as Error).message}`);
+      throw new DatabaseError(`Mongoose connection failed ${(error as Error).message}`);
     }
   }
 
   async closeConnection(): Promise<void> {
     try {
       await mongoose.connection.close();
-      logger.info('✅ Database connection closed successfully', {
-        service: 'MongoDB',
-      });
+      logger.info('Database connection closed successfully');
     } catch (error: unknown) {
       throw new DatabaseError(
-        `❌ Failed to close database connection: ${(error as Error).message}`
+        `Failed to close database connection: ${(error as Error).message}`
       );
     }
   }
 
   #handleConnectionEvents(): void {
     mongoose.connection.on('disconnected', () => {
-      logger.warn('⚠️  MongoDB disconnected');
+      logger.warn('MongoDB disconnected');
     });
 
     mongoose.connection.on('reconnected', () => {
-      logger.info('🔁 MongoDB reconnected');
+      logger.info('MongoDB reconnected');
     });
 
     mongoose.connection.on('error', (err: Error) => {
-      logger.error('🔥 MongoDB error: ', err);
+      logger.error('MongoDB error: ', err);
     });
   }
 }

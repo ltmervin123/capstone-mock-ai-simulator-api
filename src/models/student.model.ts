@@ -21,7 +21,7 @@ studentSchema.statics.signup = async function (studentData: StudentType): Promis
     throw new ConflictError('Student ID already exists');
   }
 
-  const hashedPassword = generateHash(studentData.password);
+  const hashedPassword = await generateHash(studentData.password);
 
   const newStudent = { ...studentData, password: hashedPassword };
 

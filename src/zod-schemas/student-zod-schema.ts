@@ -17,7 +17,19 @@ export const student = z.object({
     .string()
     .min(12, { message: 'Student ID must be exactly 12 digits long' })
     .max(12, { message: 'Student ID must be exactly 12 digits long' }),
-  program: z.string().min(1, { message: 'Program is required' }),
+  program: z.enum(
+    [
+      'Bachelor of Science in Business Administration',
+      'Bachelor of Science in Information Technology',
+      'Bachelor of Science in Criminology',
+      'Bachelor of Science in Hospitality Management',
+      'Bachelor of Science in Education',
+      'Bachelor of Elementary Education',
+    ],
+    {
+      message: 'Invalid program',
+    }
+  ),
   email: z
     .string()
     .email({ message: 'Invalid email address' })

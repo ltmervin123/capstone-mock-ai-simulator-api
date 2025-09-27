@@ -1,3 +1,4 @@
+import './workers/email-worker';
 import express, { type Application } from 'express';
 import 'dotenv/config';
 import cors from 'cors';
@@ -8,7 +9,7 @@ import { errorHandler } from './middlewares/error-handler';
 import { CONFIG } from './utils/constant-value';
 
 const BASE_API = '/api/v1';
-const { PORT } = CONFIG;
+const { PORT, API_URL, CLIENT_URL } = CONFIG;
 const app: Application = express();
 
 // Middleware
@@ -25,12 +26,12 @@ app.use(errorHandler);
 const startApp = async () => {
   try {
     await mongoDB.initializeConnection();
-    logger.info(`🚀 Server running on port ${PORT}`);
+    logger.info(`Server running on ${API_URL}:${PORT} | Client URL: ${CLIENT_URL}`);
   } catch (error: unknown) {
     logger.error(`Failed to start server: ${(error as Error).message}`);
   }
 };
 
-app.listen(async (): Promise<void> => {
+app.listen(PORT, async (): Promise<void> => {
   await startApp();
 });
