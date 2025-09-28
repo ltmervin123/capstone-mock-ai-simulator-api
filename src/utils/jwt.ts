@@ -1,7 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { CONFIG } from './constant-value';
 const { JWT_SECRET } = CONFIG;
+import type { SignOptions } from 'jsonwebtoken';
 
-export const verificationToken = (email: string) => {
-  return jwt.sign({ email }, JWT_SECRET!, { expiresIn: '1d' });
+export function generateToken  (payload: object, options?: SignOptions)  {
+  return jwt.sign(payload, JWT_SECRET!, options);
 };
+
+
+export function verifyToken (token: string)  {
+  return jwt.verify(token, JWT_SECRET!);
+}

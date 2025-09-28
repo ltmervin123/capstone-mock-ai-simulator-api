@@ -26,11 +26,13 @@ export function errorHandler(
     return res.status(statusCode).json({
       name: 'InternalServerError',
       message: 'Something went wrong on the server.',
+      success: false,
     });
   }
 
   return res.status(statusCode).json({
     name: err.name,
     message: err.message,
+    success: false,
   });
 }

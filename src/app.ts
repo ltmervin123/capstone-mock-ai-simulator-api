@@ -7,13 +7,14 @@ import mongoDB from './configs/mongodb-config';
 import authRoutes from './routes/auth-route';
 import { errorHandler } from './middlewares/error-handler';
 import { CONFIG } from './utils/constant-value';
+import { CORS_OPTIONS } from './configs/cors-config';
 
 const BASE_API = '/api/v1';
 const { PORT, API_URL, CLIENT_URL } = CONFIG;
 const app: Application = express();
 
 // Middleware
-app.use(cors());
+app.use(cors(CORS_OPTIONS));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

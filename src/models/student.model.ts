@@ -1,33 +1,103 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import studentSchema from '../db-schemas/student.schema';
 import type { Student as StudentType } from '../zod-schemas/student-zod-schema';
-import { ConflictError } from '../utils/errors';
-import { generateHash } from '../utils/bcrypt';
+import type { StudentDocument as StudentDocumentType } from '../types/student-type';
+import { ConflictError, UnauthorizedError } from '../utils/errors';
+import { generateHash, compareHash } from '../utils/bcrypt';
 
-interface StudentModelInterface extends Model<StudentType> {
-  signup(studentData: StudentType): Promise<void>;
+interface StudentModelInterface extends Model<StudentDocumentType> {
+  signup(studentData: StudentType): Promise<HydratedDocument<StudentDocumentType>>;
+  verifyEmail(id: Types.ObjectId): Promise<void>;
+  verifyStudent(id: Types.ObjectId): Promise<void>;
+  signin(email: string, password: string): Promise<HydratedDocument<StudentDocumentType>>;
 }
 
-studentSchema.statics.signup = async function (studentData: StudentType): Promise<void> {
-  const existingEmail = await this.findOne({ email: studentData.email }).lean();
+studentSchema.statics.signup = async function (
+  studentData: StudentType
+): Promise<HydratedDocument<StudentDocumentType>> {
+  const existingStudent = await this.findOne({
+    email: studentData.email,
+    studentId: studentData.studentId,
+  }).lean();
 
-  if (existingEmail) {
-    throw new ConflictError('Email already exists');
-  }
-
-  const existingStudentId = await this.findOne({ studentId: studentData.studentId }).lean();
-
-  if (existingStudentId) {
-    throw new ConflictError('Student ID already exists');
+  if (existingStudent) {
+    throw new ConflictError('The Email and Student ID provided is already registered.');
   }
 
   const hashedPassword = await generateHash(studentData.password);
 
-  const newStudent = { ...studentData, password: hashedPassword };
-
-  await this.create(newStudent);
+  return await this.create({ ...studentData, password: hashedPassword });
 };
 
-const StudentModel = mongoose.model<StudentType, StudentModelInterface>('Student', studentSchema);
+studentSchema.statics.verifyEmail = async function (id: Types.ObjectId): Promise<void> {
+  const student: HydratedDocument<StudentDocumentType> | null = await this.findById(id);
+
+  if (!student) {
+    throw new ConflictError('Student not found.');
+  }
+
+  if (student.isEmailVerified) {
+    throw new ConflictError('Email is already verified.');
+  }
+
+  student.isEmailVerified = true;
+
+  await student.save();
+};
+
+studentSchema.statics.verifyStudent = async function (id: Types.ObjectId): Promise<void> {
+  const student: HydratedDocument<StudentDocumentType> | null = await this.findById(id);
+
+  if (!student) {
+    throw new ConflictError('Student not found.');
+  }
+
+  if (!student.isEmailVerified) {
+    throw new ConflictError('Email verification is required before student verification.');
+  }
+
+  if (student.isStudentVerified) {
+    throw new ConflictError('Student is already verified.');
+  }
+
+  student.isStudentVerified = true;
+  await student.save();
+};
+
+studentSchema.statics.signin = async function (
+  email: string,
+  password: string
+): Promise<HydratedDocument<StudentDocumentType>> {
+  const student: HydratedDocument<StudentDocumentType> | null = await this.findOne({
+    email,
+  })
+    .select(
+      '_id firstName lastName middleName email studentId program password isStudentVerified isEmailVerified role'
+    )
+    .lean();
+
+  if (!student) {
+    throw new UnauthorizedError('Incorrect email address.');
+  }
+
+  if (!student.isEmailVerified) {
+    throw new UnauthorizedError('Email address is not verified.');
+  }
+
+  if (!student.isStudentVerified) {
+    throw new UnauthorizedError('Your account is not verified.');
+  }
+
+  if (!(await compareHash(password, student.password))) {
+    throw new UnauthorizedError('Incorrect password.');
+  }
+
+  return student;
+};
+
+const StudentModel = mongoose.model<StudentDocumentType, StudentModelInterface>(
+  'Student',
+  studentSchema
+);
 
 export default StudentModel;
