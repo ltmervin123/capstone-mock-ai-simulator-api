@@ -57,10 +57,36 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
 
     res.status(201).json({
       message: 'Sign in successfully.',
-      status: 'success',
+      success: true,
       data: { _id, firstName, lastName, middleName, program, email, role },
     });
   } catch (err) {
     next(err);
   }
+};
+
+export const signout = async (req: Request, res: Response, next: NextFunction) => {
+  const { NODE_ENV } = CONFIG;
+  try {
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+      sameSite: NODE_ENV === 'production' ? 'none' : 'lax',
+    });
+
+    res.status(200).json({
+      status: true,
+      message: 'Sign out successfully.',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const me = async (req: Request, res: Response) => {
+  res.status(200).json({
+    status: true,
+    message: 'User authenticated successfully.',
+    data: req.user!,
+  });
 };
