@@ -1,3 +1,5 @@
+import { ZodError } from 'zod';
+
 const StatusCodes = {
   BAD_REQUEST: 400,
   UNAUTHORIZED: 401,
@@ -127,16 +129,16 @@ export function makeError<TError extends Error>(error: TError) {
   }
 
   /* Library Errors */
-  // if (error instanceof ZodError) {
-  //   /* Mostly for Controller's Payload Validation */
-  //   return {
-  //     statusCode: StatusCodes.BAD_REQUEST,
-  //     error: {
-  //       ...defaultError,
-  //       issues: error.issues,
-  //     },
-  //   };
-  // }
+  if (error instanceof ZodError) {
+    /* Mostly for Controller's Payload Validation */
+    return {
+      statusCode: StatusCodes.BAD_REQUEST,
+      error: {
+        ...defaultError,
+        issues: error.issues,
+      },
+    };
+  }
 
   return {
     statusCode: StatusCodes.INTERNAL_SERVER_ERROR,

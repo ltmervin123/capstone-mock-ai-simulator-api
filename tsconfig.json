@@ -6,8 +6,8 @@
     "lib": ["ES2020"],
     "allowJs": true,
     "checkJs": false,
-    "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "src",
+    "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
@@ -28,7 +28,8 @@
     "exactOptionalPropertyTypes": false,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": [
     "**/*.ts",
@@ -45,3 +46,29 @@
     "experimentalSpecifierResolution": "node"
   }
 }
+
+// {
+//   "compilerOptions": {
+//     "target": "es2016",
+//     "module": "commonjs",
+//     "rootDir": "src",
+//     "outDir": "dist",
+//     "esModuleInterop": true,
+//     "allowSyntheticDefaultImports": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "strict": true,
+//     "noImplicitAny": true,
+//     "strictNullChecks": true,
+//     "strictFunctionTypes": true,
+//     "skipLibCheck": true,
+//     "resolveJsonModule": true,
+//     "declaration": true,
+//     "declarationMap": true,
+//     "sourceMap": true,
+//     "typeRoots": ["./node_modules/@types", "./src/types"]
+//   },
+//   "include": ["src/**/*.ts", "src/types/**/*.d.ts"],
+//   "exclude": ["node_modules", "dist", ]
+// }
+
+

@@ -15,6 +15,8 @@ interface GoogleConfig {
 interface EmailService {
   EMAIL: string | undefined;
   PASSWORD: string | undefined;
+  PORT?: string | undefined;
+  HOST?: string | undefined;
 }
 
 interface RedisConfig {
@@ -38,8 +40,8 @@ interface Constants {
 
 export const CONFIG: Constants = {
   PORT: process.env.PORT,
-  API_URL: process.env.DEVELOPMENT_BACK_END_URL,
-  CLIENT_URL: process.env.DEVELOPMENT_FRONT_END_URL,
+  API_URL: process.env.API_URL,
+  CLIENT_URL: process.env.CLIENT_URL,
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
   DATABASE: {
     USERNAME: process.env.DATABASE_USERNAME,
@@ -56,6 +58,8 @@ export const CONFIG: Constants = {
   EMAIL_SERVICE: {
     EMAIL: process.env.EMAIL_USER,
     PASSWORD: process.env.EMAIL_PASSWORD,
+    HOST: process.env.EMAIL_HOST,
+    PORT: process.env.EMAIL_PORT,
   },
   REDIS: {
     HOST: process.env.REDIS_HOST,

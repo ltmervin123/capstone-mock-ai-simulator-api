@@ -1,0 +1,46 @@
+import './workers/email-worker';
+import express, { NextFunction, type Application, Response, Request } from 'express';
+import 'dotenv/config';
+import cors from 'cors';
+import logger from './utils/logger';
+import mongoDB from './configs/mongodb-config';
+import authRoutes from './routes/auth-route';
+import { errorHandler } from './middlewares/error-handler';
+import { CONFIG } from './utils/constant-value';
+import { CORS_OPTIONS } from './configs/cors-config';
+import { NotFoundError } from './utils/errors';
+import cookieParser from 'cookie-parser';
+
+const BASE_API = '/api/v1';
+const { PORT, API_URL, CLIENT_URL } = CONFIG;
+const app: Application = express();
+
+// Security middlewares
+app.use(cors(CORS_OPTIONS));
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use(`${BASE_API}/auth`, authRoutes);
+
+// catch-all route for undefined routes
+app.use((req: Request, res: Response, next: NextFunction) => {
+  next(new NotFoundError(`Route ${req.originalUrl} not found`));
+});
+
+//Error Handler
+app.use(errorHandler);
+
+const startApp = async () => {
+  try {
+    await mongoDB.initializeConnection();
+    logger.info(`Server running on ${API_URL}:${PORT} | Client URL: ${CLIENT_URL}`);
+  } catch (error: unknown) {
+    logger.error(`Failed to start server: ${(error as Error).message}`);
+  }
+};
+
+app.listen(PORT, async (): Promise<void> => {
+  await startApp();
+});

@@ -7,7 +7,7 @@ interface LogMeta {
   message?: string;
   error?: string;
   stack?: string;
-  status?: number;
+  statusCode?: number;
   url?: string;
   method?: string;
   ip?: string;
@@ -45,8 +45,19 @@ class LoggerService {
       winston.format.splat(),
       winston.format.colorize(),
       winston.format.printf((info: unknown) => {
-        const { timestamp, level, message, error, stack, status, url, method, ip, service, name } =
-          info as Info;
+        const {
+          timestamp,
+          level,
+          message,
+          error,
+          stack,
+          statusCode,
+          url,
+          method,
+          ip,
+          service,
+          name,
+        } = info as Info;
 
         let output = ``;
         if (timestamp) output += `\n  Timestamp: ${timestamp}`;
@@ -55,7 +66,7 @@ class LoggerService {
         if (error) output += `\n  Error: ${error}`;
         if (name) output += `\n  Name: ${name}`;
         if (service) output += `\n  Service: ${service}`;
-        if (status) output += `\n  Status: ${status}`;
+        if (statusCode) output += `\n  Status: ${statusCode}`;
         if (url) output += `\n  URL: ${url}`;
         if (method) output += `\n  Method: ${method}`;
         if (ip) output += `\n  IP: ${ip}`;
