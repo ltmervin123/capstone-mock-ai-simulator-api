@@ -1,19 +1,27 @@
 import './workers/email-worker';
-import express, { NextFunction, type Application, Response, Request } from 'express';
 import 'dotenv/config';
+import express, { NextFunction, type Application, Response, Request } from 'express';
+import http from 'http';
 import cors from 'cors';
 import logger from './utils/logger';
 import mongoDB from './configs/mongodb-config';
-import authRoutes from './routes/auth-route';
 import { errorHandler } from './middlewares/error-handler';
 import { CONFIG } from './utils/constant-value';
 import { CORS_OPTIONS } from './configs/cors-config';
 import { NotFoundError } from './utils/errors';
 import cookieParser from 'cookie-parser';
+import { socketService } from './configs/socket-io';
+import authRoutes from './routes/auth-route';
+import interviewRoutes from './routes/interview-route';
 
 const BASE_API = '/api/v1';
 const { PORT, API_URL, CLIENT_URL } = CONFIG;
+
+// Express app setup
 const app: Application = express();
+
+// HTTP server setup
+const server = http.createServer(app);
 
 // Security middlewares
 app.use(cors(CORS_OPTIONS));
@@ -23,6 +31,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use(`${BASE_API}/auth`, authRoutes);
+app.use(`${BASE_API}/interview`, interviewRoutes);
 
 // catch-all route for undefined routes
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -34,6 +43,7 @@ app.use(errorHandler);
 
 const startApp = async () => {
   try {
+    socketService.initialize(server, CORS_OPTIONS);
     await mongoDB.initializeConnection();
     logger.info(`Server running on ${API_URL}:${PORT} | Client URL: ${CLIENT_URL}`);
   } catch (error: unknown) {
@@ -41,6 +51,6 @@ const startApp = async () => {
   }
 };
 
-app.listen(PORT, async (): Promise<void> => {
+server.listen(PORT, async (): Promise<void> => {
   await startApp();
 });

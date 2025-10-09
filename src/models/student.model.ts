@@ -1,5 +1,5 @@
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
-import studentSchema from '../db-schemas/student.schema';
+import studentSchema from '../db-schemas/student-chema';
 import type { Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
 import { ConflictError, UnauthorizedError } from '../utils/errors';

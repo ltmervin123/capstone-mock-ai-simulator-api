@@ -128,6 +128,20 @@ export function makeError<TError extends Error>(error: TError) {
     };
   }
 
+  if (error instanceof DatabaseError) {
+    return {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      error: defaultError,
+    };
+  }
+
+  if (error instanceof ExternalServiceError) {
+    return {
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+      error: defaultError,
+    };
+  }
+
   /* Library Errors */
   if (error instanceof ZodError) {
     /* Mostly for Controller's Payload Validation */
