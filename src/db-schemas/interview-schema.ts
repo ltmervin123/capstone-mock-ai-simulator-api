@@ -18,7 +18,7 @@ const studentSchema = new mongoose.Schema(
       fillerCount: { type: Number, required: true },
       totalScore: { type: Number, required: true },
     },
-    feedback: [
+    feedbacks: [
       {
         question: { type: String, required: true },
         answer: { type: String, required: true },

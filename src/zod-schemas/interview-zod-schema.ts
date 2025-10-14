@@ -1,4 +1,5 @@
-import { z } from 'zod';
+import { number, z } from 'zod';
+import { duration } from 'zod/v4/classic/iso.cjs';
 
 export const textToSpeechPayload = z.object({
   text: z
@@ -37,6 +38,24 @@ export const generateFollowUpQuestionPayload = z.object({
     .max(5, { message: 'A maximum of 5 conversation turns is allowed' }),
 });
 
+export const generateInterviewFeedbackPayload = z.object({
+  interviewType: z.enum(['Basic', 'Behavioral', 'Expert'], {
+    message: 'Interview type must be Basic, Behavioral, or Expert',
+  }),
+  duration: z.string().min(1, { message: 'Duration is required' }),
+  numberOfQuestions: z.number().min(1, { message: 'At least one question is required' }),
+  conversation: z
+    .array(
+      z.object({
+        AI: z.string().min(1, { message: 'AI text is required' }),
+        CANDIDATE: z.string().min(1, { message: 'Candidate text is required' }),
+      })
+    )
+    .min(1, { message: 'At least one question-answer pair is required' })
+    .max(20, { message: 'A maximum of 20 question-answer pairs is allowed' }),
+});
+
 export type GenerateGreetingResponsePayload = z.infer<typeof generateGreetingResponsePayload>;
 export type TextToSpeechPayload = z.infer<typeof textToSpeechPayload>;
 export type GenerateFollowUpQuestionPayload = z.infer<typeof generateFollowUpQuestionPayload>;
+export type GenerateInterviewFeedbackPayload = z.infer<typeof generateInterviewFeedbackPayload>;

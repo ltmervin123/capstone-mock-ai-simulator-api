@@ -56,4 +56,21 @@ router.post(
   InterviewController.generateFollowUpQuestion
 );
 
+/**
+ * @route POST /api/v1/interview/make-interview-feedback
+ * @description Generate interview feedback for the user
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @body { interviewType, conversation, duration, numberOfQuestions }
+ * @returns { status, message }
+ */
+
+router.post(
+  '/make-interview-feedback',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewValidator.validateMakeInterviewFeedback,
+  InterviewController.makeInterviewFeedback
+);
+
 export default router;

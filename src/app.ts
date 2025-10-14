@@ -1,4 +1,5 @@
 import './workers/email-worker';
+import './workers/claude-worker';
 import 'dotenv/config';
 import express, { NextFunction, type Application, Response, Request } from 'express';
 import http from 'http';

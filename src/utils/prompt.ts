@@ -138,12 +138,12 @@ export const feedback = (data: InterviewConversation) => {
       "fillerCount": number (raw count),
       "totalScore": number (whole number)
     },
-    "areasOfImprovement": [
+    "areasOfImprovements": [
       "string for answer 1",
       "string for answer 2",
       ...
     ],
-    "feedback": [
+    "feedbacks": [
       "string for answer 1",
       "string for answer 2",
       ...
