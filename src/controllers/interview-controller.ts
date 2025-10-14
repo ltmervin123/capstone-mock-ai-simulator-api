@@ -1,7 +1,10 @@
 import * as TextToSpeechService from '../services/text-to-speech-service';
-import * as GeminiService from '../services/claude-service';
+import * as ClaudeService from '../services/claude-service';
 import { Request, Response, NextFunction } from 'express';
-import { TextToSpeechPayload as TextToSpeechPayloadType } from '../zod-schemas/interview-zod-schema';
+import {
+  type GenerateFollowUpQuestionPayload,
+  type TextToSpeechPayload as TextToSpeechPayloadType,
+} from '../zod-schemas/interview-zod-schema';
 import { type GenerateGreetingResponsePayload as GenerateGreetingResponsePayloadType } from '../zod-schemas/interview-zod-schema';
 
 export const convertTextToSpeech = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,11 +26,26 @@ export const generateGreetingResponse = async (req: Request, res: Response, next
   const greetingData = req.body as GenerateGreetingResponsePayloadType;
 
   try {
-    const greetingResponse = await GeminiService.generateGreetingResponse(greetingData);
+    const greetingResponse = await ClaudeService.generateGreetingResponse(greetingData);
     res.json({
       success: true,
       message: 'Greeting response generated successfully',
       greetingResponse,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const generateFollowUpQuestion = async (req: Request, res: Response, next: NextFunction) => {
+  const data = req.body as GenerateFollowUpQuestionPayload;
+
+  try {
+    const followUpQuestion = await ClaudeService.generateFollowUpQuestion(data);
+    res.json({
+      success: true,
+      message: 'Follow-up question generated successfully',
+      followUpQuestion,
     });
   } catch (error) {
     next(error);

@@ -28,9 +28,32 @@ router.post(
  * @access Private
  * @rateLimit authRateLimiter
  * @body { text, selectedVoice }
- * @returns { status, audioContent }
+ * @returns { status, greetingResponse, message }
  */
 
-router.post('/greeting-response', InterviewController.generateGreetingResponse);
+router.post(
+  '/greeting-response',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewValidator.validateGenerateGreetingResponse,
+  InterviewController.generateGreetingResponse
+);
+
+/**
+ * @route POST /api/v1/interview/follow-up-question
+ * @description Generate a follow-up question for the user
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @body { interviewType, conversation }
+ * @returns { status, followUpQuestion, message }
+ */
+
+router.post(
+  '/follow-up-question',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewValidator.validateGenerateFollowUpQuestion,
+  InterviewController.generateFollowUpQuestion
+);
 
 export default router;

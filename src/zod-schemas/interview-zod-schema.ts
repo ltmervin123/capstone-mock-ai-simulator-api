@@ -22,5 +22,21 @@ export const generateGreetingResponsePayload = z.object({
   }),
 });
 
+export const generateFollowUpQuestionPayload = z.object({
+  interviewType: z.enum(['Basic', 'Behavioral', 'Expert'], {
+    message: 'Interview type must be Basic, Behavioral, or Expert',
+  }),
+  conversation: z
+    .array(
+      z.object({
+        AI: z.string().min(1, { message: 'AI conversation text is required' }),
+        CANDIDATE: z.string().min(1, { message: 'Candidate conversation text is required' }),
+      })
+    )
+    .min(1, { message: 'At least one conversation turn is required' })
+    .max(5, { message: 'A maximum of 5 conversation turns is allowed' }),
+});
+
 export type GenerateGreetingResponsePayload = z.infer<typeof generateGreetingResponsePayload>;
 export type TextToSpeechPayload = z.infer<typeof textToSpeechPayload>;
+export type GenerateFollowUpQuestionPayload = z.infer<typeof generateFollowUpQuestionPayload>;
