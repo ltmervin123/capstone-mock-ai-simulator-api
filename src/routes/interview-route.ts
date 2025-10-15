@@ -73,4 +73,35 @@ router.post(
   InterviewController.makeInterviewFeedback
 );
 
+/**
+ * @route POST /api/v1/interview/history
+ * @description Generate interview feedback for the user
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @returns { status, message, interviewHistory }
+ */
+
+router.get(
+  '/history',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewController.getInterviewHistory
+);
+
+/**
+ * @route POST /api/v1/interview/:interviewId
+ * @description Get interview detail by ID
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @returns { status, message, interviewDetail }
+ */
+
+router.get(
+  '/:interviewId',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewValidator.validateInterviewIdParam,
+  InterviewController.getInterviewDetail
+);
+
 export default router;

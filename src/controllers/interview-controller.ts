@@ -68,3 +68,33 @@ export const makeInterviewFeedback = async (req: Request, res: Response, next: N
     next(error);
   }
 };
+
+export const getInterviewHistory = async (req: Request, res: Response, next: NextFunction) => {
+  const studentId = req.user?._id!;
+
+  try {
+    const interviewHistory = await InterviewService.getInterviewHistory(studentId);
+    res.json({
+      success: true,
+      message: 'Interview history retrieved successfully',
+      interviewHistory,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getInterviewDetail = async (req: Request, res: Response, next: NextFunction) => {
+  const studentId = req.user?._id!;
+  const { interviewId } = req.params;
+  try {
+    const interviewDetail = await InterviewService.getInterviewDetail(interviewId, studentId);
+    res.json({
+      success: true,
+      message: 'Interview detail retrieved successfully',
+      interviewDetail,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

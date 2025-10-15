@@ -4,6 +4,7 @@ import {
   generateGreetingResponsePayload as generateGreetingResponsePayloadSchema,
   generateFollowUpQuestionPayload as generateFollowUpQuestionPayloadSchema,
   generateInterviewFeedbackPayload as generateInterviewFeedbackPayloadSchema,
+  interviewIdSchema,
 } from '../zod-schemas/interview-zod-schema';
 
 export const validateTextToSpeech = (req: Request, res: Response, next: NextFunction) => {
@@ -48,6 +49,16 @@ export const validateMakeInterviewFeedback = (req: Request, res: Response, next:
   try {
     const result = generateInterviewFeedbackPayloadSchema.parse(req.body);
     req.body = result;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const validateInterviewIdParam = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = interviewIdSchema.parse(req.params.interviewId);
+    req.params.interviewId = result;
     next();
   } catch (error) {
     next(error);

@@ -55,6 +55,11 @@ export const generateInterviewFeedbackPayload = z.object({
     .max(20, { message: 'A maximum of 20 question-answer pairs is allowed' }),
 });
 
+export const interviewIdSchema = z
+  .string()
+  .min(24, { message: 'Interview ID must be a valid mongoose ObjectId' })
+  .max(24, { message: 'Interview ID must be a valid mongoose ObjectId' });
+
 export type GenerateGreetingResponsePayload = z.infer<typeof generateGreetingResponsePayload>;
 export type TextToSpeechPayload = z.infer<typeof textToSpeechPayload>;
 export type GenerateFollowUpQuestionPayload = z.infer<typeof generateFollowUpQuestionPayload>;

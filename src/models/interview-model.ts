@@ -9,7 +9,10 @@ import type {
 
 interface InterviewModelInterface extends Model<InterviewDocumentType> {
   createInterview(interviewData: InterviewClientDocumentType): Promise<void>;
-  getInterviewDetail(studentId: string): Promise<HydratedDocument<InterviewDocumentType>>;
+  getInterviewDetail(
+    interviewId: string,
+    studentId: string
+  ): Promise<HydratedDocument<InterviewDocumentType>>;
   getInterviewHistory(studentId: string): Promise<InterviewHistoryType[]>;
 }
 interviewSchema.statics.createInterview = async function (
@@ -19,9 +22,10 @@ interviewSchema.statics.createInterview = async function (
 };
 
 interviewSchema.statics.getInterviewDetail = async function (
+  interviewId: string,
   studentId: string
 ): Promise<HydratedDocument<InterviewDocumentType>> {
-  const interview = await this.findOne({ studentId }).lean();
+  const interview = await this.findOne({ _id: interviewId, studentId }).lean();
 
   if (!interview) {
     throw new NotFoundError('Interview detail not found');
@@ -33,7 +37,17 @@ interviewSchema.statics.getInterviewDetail = async function (
 interviewSchema.statics.getInterviewHistory = async function (
   studentId: string
 ): Promise<InterviewHistoryType[]> {
-  return await this.find({ studentId }).sort({ createdAt: -1 }).lean();
+  return await this.find({ studentId })
+    .select({
+      _id: 1,
+      interviewType: 1,
+      duration: 1,
+      numberOfQuestions: 1,
+      createdAt: 1,
+      totalScore: '$scores.totalScore',
+    })
+    .sort({ createdAt: -1 })
+    .lean();
 };
 
 const InterviewModel = mongoose.model<InterviewDocumentType, InterviewModelInterface>(
