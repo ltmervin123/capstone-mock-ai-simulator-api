@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const studentSchema = new mongoose.Schema(
+const interviewSchema = new mongoose.Schema(
   {
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -32,4 +32,4 @@ const studentSchema = new mongoose.Schema(
   }
 );
 
-export default studentSchema;
+export default interviewSchema;

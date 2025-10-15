@@ -2,17 +2,18 @@ import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import { NotFoundError } from '../utils/errors';
 import interviewSchema from '../db-schemas/interview-schema';
 import type {
+  InterviewClientDocument as InterviewClientDocumentType,
   InterviewDocument as InterviewDocumentType,
   InterviewHistory as InterviewHistoryType,
 } from '../types/interview-type';
 
 interface InterviewModelInterface extends Model<InterviewDocumentType> {
-  createInterview(interviewData: InterviewDocumentType): Promise<void>;
+  createInterview(interviewData: InterviewClientDocumentType): Promise<void>;
   getInterviewDetail(studentId: string): Promise<HydratedDocument<InterviewDocumentType>>;
   getInterviewHistory(studentId: string): Promise<InterviewHistoryType[]>;
 }
 interviewSchema.statics.createInterview = async function (
-  interviewData: InterviewDocumentType
+  interviewData: InterviewClientDocumentType
 ): Promise<void> {
   await this.create(interviewData);
 };

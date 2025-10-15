@@ -1,4 +1,7 @@
-export type InterviewDocument = {
+import { InferSchemaType } from 'mongoose';
+import interviewSchema from '../db-schemas/interview-schema.js';
+
+export type InterviewClientDocument = {
   interviewType: 'Basic' | 'Behavioral' | 'Expert';
   studentId: string;
   duration: string;
@@ -20,6 +23,8 @@ export type InterviewDocument = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+export type InterviewDocument = InferSchemaType<typeof interviewSchema>;
 
 export type InterviewHistory = {
   interviewType: 'Basic' | 'Behavioral' | 'Expert';
