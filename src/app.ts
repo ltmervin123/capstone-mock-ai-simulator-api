@@ -10,6 +10,7 @@ import { errorHandler } from './middlewares/error-handler';
 import { CONFIG } from './utils/constant-value';
 import { CORS_OPTIONS } from './configs/cors-config';
 import { NotFoundError } from './utils/errors';
+import { createUploadFolder } from './utils/init-upload-folder';
 import cookieParser from 'cookie-parser';
 import { socketService } from './configs/socket-io';
 import authRoutes from './routes/auth-route';
@@ -48,6 +49,7 @@ const startApp = async () => {
   try {
     socketService.initialize(server, CORS_OPTIONS);
     await mongoDB.initializeConnection();
+    await createUploadFolder();
     logger.info(`Server running on ${API_URL}:${PORT} | Client URL: ${CLIENT_URL}`);
   } catch (error: unknown) {
     logger.error(`Failed to start server: ${(error as Error).message}`);
