@@ -20,7 +20,7 @@ export const MODEL_LIST = {
 
 const DEFAULT_MODEL = 'claude-3-5-haiku-20241022';
 const DEFAULT_MAX_TOKENS = 3000;
-const DEFAULT_TEMPERATURE = 0.3;
+const DEFAULT_TEMPERATURE = 0.8;
 
 const anthropic = new Anthropic({
   apiKey: CONFIG.ANTHROPIC_API_KEY,

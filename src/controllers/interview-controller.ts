@@ -3,11 +3,13 @@ import * as ClaudeService from '../services/claude-service';
 import * as InterviewService from '../services/interview-service';
 import { Request, Response, NextFunction } from 'express';
 import {
+  ExpertInterviewPayload,
   GenerateInterviewFeedbackPayload,
   type GenerateFollowUpQuestionPayload,
   type TextToSpeechPayload as TextToSpeechPayloadType,
 } from '../zod-schemas/interview-zod-schema';
 import { type GenerateGreetingResponsePayload as GenerateGreetingResponsePayloadType } from '../zod-schemas/interview-zod-schema';
+import fs from 'fs';
 
 export const convertTextToSpeech = async (req: Request, res: Response, next: NextFunction) => {
   const data = req.body as TextToSpeechPayloadType;
@@ -96,5 +98,23 @@ export const getInterviewDetail = async (req: Request, res: Response, next: Next
     });
   } catch (error) {
     next(error);
+  }
+};
+
+export const expertInterviewQuestions = async (req: Request, res: Response, next: NextFunction) => {
+  const file = req.file as Express.Multer.File;
+  const userId = req.user?._id!;
+  const { jobTitle } = req.body as ExpertInterviewPayload;
+  try {
+    const questions = await InterviewService.expertInterviewQuestions(file, userId, jobTitle);
+    res.json({
+      success: true,
+      message: 'Expert interview questions generated successfully',
+      questions,
+    });
+  } catch (error) {
+    next(error);
+  } finally {
+    if (file) fs.unlinkSync(file.path);
   }
 };

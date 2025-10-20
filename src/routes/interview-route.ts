@@ -3,6 +3,7 @@ import { globalRateLimiter } from '../configs/rate-limit-config';
 import * as InterviewController from '../controllers/interview-controller';
 import * as InterviewValidator from '../middlewares/interview-validator';
 import { authCheckHandler } from '../middlewares/auth-check-handler';
+import uploadResume from '../middlewares/multer';
 const router = Router();
 
 /**
@@ -86,6 +87,24 @@ router.get(
   globalRateLimiter,
   authCheckHandler,
   InterviewController.getInterviewHistory
+);
+
+/**
+ * @route POST /api/v1/interview/upload-resume
+ * @description Upload user resume and generate expert interview questions
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @body { resume (file), jobTitle }
+ * @returns { status, message, resumePath }
+ */
+
+router.post(
+  '/upload-resume',
+  globalRateLimiter,
+  authCheckHandler,
+  uploadResume,
+  InterviewValidator.validateUploadResume,
+  InterviewController.expertInterviewQuestions
 );
 
 /**

@@ -3,6 +3,7 @@ import {
   type GenerateFollowUpQuestionPayload,
   type GenerateGreetingResponsePayload as GreetingData,
 } from '../zod-schemas/interview-zod-schema';
+import type { ExpertInterviewArgs } from '../types/prompt';
 
 export const greeting = (data: GreetingData) => {
   const { userName, interviewerName, conversation, interviewType } = data;
@@ -150,5 +151,58 @@ export const feedback = (data: InterviewConversation) => {
     </output_format>
 
     IMPORTANT: Your response MUST be a valid JSON object that strictly follows the output format above. Do not include any text before or after the JSON. Do not include markdown formatting, code blocks, or explanations. Ensure all JSON syntax is correct with proper use of quotes, commas, and brackets. The response should parse correctly as JSON without any modifications.
+  `;
+};
+
+export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
+  return `
+  You will be given extracted data from a resume file and a list of previously generated questions. Your task is to determine if the extracted data represents a valid resume, and if valid, generate 5 unique interview questions based on the job title and resume content.
+
+  <resume_data>
+  ${data.resumeData}
+  </resume_data>
+
+  <job_title>
+  ${data.jobTitle}
+  </job_title>
+
+  <previous_questions>
+  ${JSON.stringify(data.previousQuestions)}
+  </previous_questions>
+
+  First, evaluate whether the resume data is valid. A resume is considered valid if it contains at least 3 of the following elements:
+  - Personal information (name, contact details)
+  - Work experience or employment history
+  - Education background
+  - Skills section
+  - Professional summary or objective
+  - Certifications or achievements
+
+  The data should be coherent and resume-like in structure. Random text, gibberish, non-resume documents, or data that appears to be from other document types should be considered invalid.
+
+  If the resume is invalid, output only this JSON structure:
+  {
+    "isResumeValid": false
+  }
+
+  If the resume is valid, generate 5 unique interview questions based on the specific content, experience, and skills mentioned in the resume. The questions should be:
+  - Relevant to the candidate's background
+  - Different from any questions in the previous_questions list
+  - Professional and appropriate for an interview setting
+  - Specific enough to relate to the resume content
+  - Varied in type (behavioral, technical, experience-based, etc.)
+
+  For valid resumes, output only this JSON structure:
+  {
+    isResumeValid: true,
+    "questions": ["question 1", "question 2", "question 3", "question 4", "question 5"]
+  }
+
+  Important requirements:
+  - Your response must be ONLY a valid JSON object
+  - Do not include any explanatory text, comments, or additional content
+  - Do not use markdown formatting or code blocks
+  - Ensure all questions are unique and not duplicates of the previous_questions
+  - Make questions specific to the resume content rather than generic interview questions
   `;
 };

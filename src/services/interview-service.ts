@@ -1,6 +1,10 @@
 import QueueService from '../queue';
 import { type GenerateInterviewFeedbackPayload } from '../zod-schemas/interview-zod-schema';
+import * as Prompt from '../utils/prompt';
+import * as Claude from '../third-parties/anthropic';
 import InterviewModel from '../models/interview-model';
+import { parseFile } from '../utils/parse-file';
+import { BadRequestError } from '../utils/errors';
 
 export const makeInterviewFeedback = async (
   studentId: string,
@@ -18,4 +22,29 @@ export const getInterviewHistory = async (studentId: string) => {
 
 export const getInterviewDetail = async (interviewId: string, studentId: string) => {
   return await InterviewModel.getInterviewDetail(interviewId, studentId);
+};
+
+export const expertInterviewQuestions = async (
+  file: Express.Multer.File,
+  userId: string,
+  jobTitle: string
+) => {
+  const [resumeData, previousQuestions] = await Promise.all([
+    parseFile(file),
+    InterviewModel.getUserExpertInterviewRecentQuestionUsed(userId),
+  ]);
+
+  const prompt = Prompt.expertInterviewQuestions({ resumeData, previousQuestions, jobTitle });
+  const model = Claude.MODEL_LIST.questionGeneration;
+  const response = await Claude.chat(prompt, model);
+  const { isResumeValid, questions }: { questions?: string[]; isResumeValid?: boolean } =
+    JSON.parse(response);
+
+  if (!isResumeValid) {
+    throw new BadRequestError(
+      'The uploaded resume is not valid. Please upload a proper resume file.'
+    );
+  }
+
+  return questions;
 };

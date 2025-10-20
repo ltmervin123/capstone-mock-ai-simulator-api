@@ -60,6 +60,12 @@ export const interviewIdSchema = z
   .min(24, { message: 'Interview ID must be a valid mongoose ObjectId' })
   .max(24, { message: 'Interview ID must be a valid mongoose ObjectId' });
 
+export const expertInterviewPayload = z.object({
+  jobTitle: z.string().min(1, { message: 'Job title is required' }).max(100, {
+    message: 'Job title must be at most 100 characters long',
+  }),
+});
+export type ExpertInterviewPayload = z.infer<typeof expertInterviewPayload>;
 export type GenerateGreetingResponsePayload = z.infer<typeof generateGreetingResponsePayload>;
 export type TextToSpeechPayload = z.infer<typeof textToSpeechPayload>;
 export type GenerateFollowUpQuestionPayload = z.infer<typeof generateFollowUpQuestionPayload>;

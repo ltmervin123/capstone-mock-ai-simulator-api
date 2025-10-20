@@ -5,7 +5,9 @@ import {
   generateFollowUpQuestionPayload as generateFollowUpQuestionPayloadSchema,
   generateInterviewFeedbackPayload as generateInterviewFeedbackPayloadSchema,
   interviewIdSchema,
+  expertInterviewPayload as expertInterviewPayloadSchema,
 } from '../zod-schemas/interview-zod-schema';
+import { BadRequestError } from '../utils/errors';
 
 export const validateTextToSpeech = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -59,6 +61,20 @@ export const validateInterviewIdParam = (req: Request, res: Response, next: Next
   try {
     const result = interviewIdSchema.parse(req.params.interviewId);
     req.params.interviewId = result;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const validateUploadResume = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const resume = req.file as Express.Multer.File;
+    const result = expertInterviewPayloadSchema.parse(req.body);
+    if (!resume) {
+      throw new BadRequestError('Resume file is required');
+    }
+    req.body = result;
     next();
   } catch (error) {
     next(error);

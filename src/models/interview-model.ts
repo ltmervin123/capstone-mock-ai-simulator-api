@@ -14,6 +14,7 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
     studentId: string
   ): Promise<HydratedDocument<InterviewDocumentType>>;
   getInterviewHistory(studentId: string): Promise<InterviewHistoryType[]>;
+  getUserExpertInterviewRecentQuestionUsed(userId: string): Promise<string[]>;
 }
 interviewSchema.statics.createInterview = async function (
   interviewData: InterviewClientDocumentType
@@ -48,6 +49,24 @@ interviewSchema.statics.getInterviewHistory = async function (
     })
     .sort({ createdAt: -1 })
     .lean();
+};
+
+interviewSchema.statics.getUserExpertInterviewRecentQuestionUsed = async function (
+  userId: string
+): Promise<string[]> {
+  type feedbacks = {
+    question: string;
+  };
+  const recentInterview = await this.findOne({ studentId: userId, interviewType: 'Expert' })
+    .select('feedbacks')
+    .sort({ createdAt: -1 })
+    .lean();
+
+  if (!recentInterview) {
+    return [];
+  }
+
+  return recentInterview.feedbacks.map((feedback: feedbacks) => feedback.question);
 };
 
 const InterviewModel = mongoose.model<InterviewDocumentType, InterviewModelInterface>(
