@@ -10,7 +10,7 @@ export const CORS_OPTIONS: CorsOptions = {
       return callback(new ForbiddenError('Not allowed by CORS'));
     }
 
-    if (origin && origin !== CLIENT_URL) {
+    if (origin !== CLIENT_URL && NODE_ENV !== 'development') {
       return callback(new ForbiddenError('Not allowed by CORS'));
     }
 

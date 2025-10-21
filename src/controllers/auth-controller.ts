@@ -58,7 +58,7 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
     res.status(201).json({
       message: 'Sign in successfully.',
       success: true,
-      data: { _id, firstName, lastName, middleName, program, email, role },
+      user: { _id, firstName, lastName, middleName, program, email, role },
     });
   } catch (err) {
     next(err);
@@ -87,6 +87,6 @@ export const me = async (req: Request, res: Response) => {
   res.status(200).json({
     status: true,
     message: 'User authenticated successfully.',
-    data: req.user!,
+    user: req.user!,
   });
 };
