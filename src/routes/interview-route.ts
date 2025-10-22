@@ -108,6 +108,21 @@ router.post(
 );
 
 /**
+ * @route GET /api/v1/interview/dashboard-stats
+ * @description Get user interview dashboard statistics
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @returns { status, message, dashboardStats }
+ */
+
+router.get(
+  '/dashboard-stats',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewController.getUserDashboardStat
+);
+
+/**
  * @route POST /api/v1/interview/:interviewId
  * @description Get interview detail by ID
  * @access Private

@@ -118,3 +118,18 @@ export const expertInterviewQuestions = async (req: Request, res: Response, next
     if (file) fs.unlinkSync(file.path);
   }
 };
+
+export const getUserDashboardStat = async (req: Request, res: Response, next: NextFunction) => {
+  const studentId = req.user?._id!;
+
+  try {
+    const dashboardStats = await InterviewService.getUserDashboardStat(studentId);
+    res.json({
+      success: true,
+      message: 'User dashboard statistics retrieved successfully',
+      dashboardStats,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

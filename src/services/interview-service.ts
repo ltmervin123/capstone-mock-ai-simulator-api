@@ -48,3 +48,30 @@ export const expertInterviewQuestions = async (
 
   return questions;
 };
+
+export const getUserDashboardStat = async (studentId: string) => {
+  const [
+    interviewsCount,
+    averageScores,
+    highestScores,
+    progressOverTime,
+    performanceBreakDown,
+    interviewTypeScores,
+  ] = await Promise.all([
+    InterviewModel.getUserInterviewsCount(studentId),
+    InterviewModel.getUserInterviewsAverageScore(studentId),
+    InterviewModel.getUserInterviewHighestScore(studentId),
+    InterviewModel.getUserInterviewProgressOverTime(studentId),
+    InterviewModel.getUserInterviewPerformanceBreakdown(studentId),
+    InterviewModel.getUserInterviewTypeScores(studentId),
+  ]);
+
+  return {
+    interviewsCount,
+    averageScores,
+    highestScores,
+    progressOverTime,
+    performanceBreakDown,
+    interviewTypeScores,
+  };
+};

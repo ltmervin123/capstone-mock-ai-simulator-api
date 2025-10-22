@@ -51,3 +51,37 @@ export type GenerateInterviewFeedbackResult = {
   areasOfImprovements: string[];
   feedbacks: string[];
 };
+
+export type InterviewProgressOverTime = {
+  daily: {
+    labels: string[];
+    data: number[];
+  };
+  weekly: {
+    labels: string[];
+    data: number[];
+  };
+  monthly: {
+    labels: string[];
+    data: number[];
+  };
+};
+
+export type InterviewPerformanceBreakdown = {
+  grammar: number;
+  experience: number;
+  skills: number;
+  relevance: number;
+};
+
+export type InterviewTypeScores = {
+  basic: number;
+  behavioral: number;
+  expert: number;
+};
+
+export type InterviewHighestScore = {
+  interviewType: string;
+  createdAt: Date;
+  score: number;
+};
