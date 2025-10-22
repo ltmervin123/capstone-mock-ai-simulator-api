@@ -122,6 +122,36 @@ router.get(
   InterviewController.getUserDashboardStat
 );
 
+/** * @route PUT /api/v1/interview/mark-as-viewed/:interviewId
+ * @description Mark an interview as viewed by the user
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @params { interviewId }
+ * @returns { status, message }
+ */
+
+router.put(
+  '/mark-as-viewed/:interviewId',
+  globalRateLimiter,
+  authCheckHandler,
+  InterviewValidator.validateInterviewIdParam,
+  InterviewController.updateUserUnViewedInterviewCount
+);
+
+/**
+ * @route GET /api/v1/interview/viewed-interviews-count
+ * @description Get count of viewed interviews by the user
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @returns { status, message, viewedInterviewsCount }
+ */
+
+router.get(
+  '/un-viewed-interviews-count',
+  authCheckHandler,
+  InterviewController.getUserUnViewedInterviewCount
+);
+
 /**
  * @route POST /api/v1/interview/:interviewId
  * @description Get interview detail by ID

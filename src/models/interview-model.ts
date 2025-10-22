@@ -28,6 +28,8 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
     studentId: string
   ): Promise<InterviewPerformanceBreakdownType>;
   getUserInterviewTypeScores(studentId: string): Promise<InterviewTypeScoresType>;
+  getUserUnViewedInterviewCount(studentId: string): Promise<number>;
+  updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
 }
 interviewSchema.statics.createInterview = async function (
   interviewData: InterviewClientDocumentType
@@ -59,6 +61,7 @@ interviewSchema.statics.getInterviewHistory = async function (
       numberOfQuestions: 1,
       createdAt: 1,
       totalScore: '$scores.totalScore',
+      isViewed: 1,
     })
     .sort({ createdAt: -1 })
     .lean();
@@ -263,10 +266,25 @@ interviewSchema.statics.getUserInterviewTypeScores = async function (
   };
 
   result.forEach((item) => {
-    scores[item._id.toString().toLowerCase() as keyof InterviewTypeScoresType] = Math.round(item.avgScore);
+    scores[item._id.toString().toLowerCase() as keyof InterviewTypeScoresType] = Math.round(
+      item.avgScore
+    );
   });
 
   return scores;
+};
+
+interviewSchema.statics.getUserUnViewedInterviewCount = async function (
+  studentId: string
+): Promise<number> {
+  return await this.countDocuments({ studentId, isViewed: false });
+};
+
+interviewSchema.statics.updateUserUnViewedInterviewCount = async function (
+  studentId: string,
+  interviewId: string
+): Promise<void> {
+  await this.updateOne({ studentId, _id: interviewId }, { isViewed: true });
 };
 
 const InterviewModel = mongoose.model<InterviewDocumentType, InterviewModelInterface>(

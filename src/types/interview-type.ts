@@ -32,6 +32,7 @@ export type InterviewHistory = {
   duration: string;
   numberOfQuestions: number;
   totalScore: number;
+  isViewed: boolean;
 };
 
 export type InterviewConversation = {

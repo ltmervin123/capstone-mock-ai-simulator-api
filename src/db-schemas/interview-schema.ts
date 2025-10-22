@@ -26,6 +26,7 @@ const interviewSchema = new mongoose.Schema(
         answerFeedback: { type: String, required: true },
       },
     ],
+    isViewed: { type: Boolean, default: false },
   },
   {
     timestamps: true,

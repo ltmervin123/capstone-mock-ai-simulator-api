@@ -133,3 +133,41 @@ export const getUserDashboardStat = async (req: Request, res: Response, next: Ne
     next(error);
   }
 };
+
+export const getUserUnViewedInterviewCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const studentId = req.user?._id!;
+
+  try {
+    const count = await InterviewService.getUserUnViewedInterviewCount(studentId);
+    res.json({
+      success: true,
+      message: 'User un viewed interview count retrieved successfully',
+      count,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserUnViewedInterviewCount = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const studentId = req.user?._id!;
+  const { interviewId } = req.params;
+
+  try {
+    await InterviewService.updateUserUnViewedInterviewCount(studentId, interviewId);
+    res.json({
+      success: true,
+      message: 'User un viewed interview count updated successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};

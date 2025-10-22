@@ -75,3 +75,11 @@ export const getUserDashboardStat = async (studentId: string) => {
     interviewTypeScores,
   };
 };
+
+export const getUserUnViewedInterviewCount = async (studentId: string) => {
+  return await InterviewModel.getUserUnViewedInterviewCount(studentId);
+};
+
+export const updateUserUnViewedInterviewCount = async (studentId: string, interviewId: string) => {
+  await InterviewModel.updateUserUnViewedInterviewCount(studentId, interviewId);
+};
