@@ -2,7 +2,6 @@
   "name": "capstone-mock-ai-simulator-api",
   "version": "1.0.0",
   "main": "dist/app.js",
-  "type": "module",
   "scripts": {
     "start": "tsc && node dist/app.js",
     "dev": "nodemon",
