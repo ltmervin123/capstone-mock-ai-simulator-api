@@ -1,6 +1,6 @@
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import studentSchema from '../db-schemas/student-schema';
-import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
+import { student, type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
 import { ConflictError, UnauthorizedError } from '../utils/errors';
 import { generateHash, compareHash } from '../utils/bcrypt';
@@ -20,7 +20,32 @@ interface StudentModelInterface extends Model<StudentDocumentType> {
   getCountsOfAuthenticatedStudents(): Promise<number>;
   getPendingStudents(): Promise<HydratedDocument<StudentDocumentType>[]>;
   getAcceptedStudents(): Promise<HydratedDocument<StudentDocumentType>[]>;
+  acceptStudent(id: string): Promise<StudentDocumentType>;
+  rejectStudent(id: string): Promise<StudentDocumentType>;
 }
+
+studentSchema.statics.rejectStudent = async function (id: string): Promise<StudentDocumentType> {
+  const rejectedStudent = await this.findByIdAndDelete(id);
+
+  if (!rejectedStudent) {
+    throw new ConflictError('Student not found.');
+  }
+
+  return rejectedStudent;
+};
+
+studentSchema.statics.acceptStudent = async function (id: string): Promise<StudentDocumentType> {
+  const acceptedStudent = await this.findByIdAndUpdate(id, {
+    isStudentVerified: true,
+    acceptedAt: new Date(),
+  });
+
+  if (!acceptedStudent) {
+    throw new ConflictError('Student not found.');
+  }
+
+  return acceptedStudent;
+};
 
 studentSchema.statics.getAcceptedStudents = async function (): Promise<
   HydratedDocument<StudentDocumentType>[]
