@@ -16,4 +16,30 @@ router.get(
   AdminController.getAdminDashboardStats
 );
 
+/**
+ * @route GET /api/v1/admin/pending-students
+ * @description Retrieve list of pending students
+ * @access Private (Admin only)
+ * @returns {status, message, pendingStudents}
+ */
+router.get(
+  '/pending-students',
+  authCheckHandler,
+  roleAdminCheck,
+  AdminController.getPendingStudents
+);
+
+/**
+ * @route GET /api/v1/admin/accepted-students
+ * @description Retrieve list of accepted students
+ * @access Private (Admin only)
+ * @returns {status, message, acceptedStudents}
+ */
+router.get(
+  '/accepted-students',
+  authCheckHandler,
+  roleAdminCheck,
+  AdminController.getAcceptedStudents
+);
+
 export default router;

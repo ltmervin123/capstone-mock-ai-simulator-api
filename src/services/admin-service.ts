@@ -27,3 +27,11 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     authenticatedStudents,
   };
 };
+
+export const getPendingStudents = async () => {
+  return await StudentModel.getPendingStudents();
+};
+
+export const getAcceptedStudents = async () => {
+  return await StudentModel.getAcceptedStudents();
+};

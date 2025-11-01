@@ -12,6 +12,7 @@ const studentSchema = new mongoose.Schema(
     isStudentVerified: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },
     isAuthenticated: { type: Boolean, default: false },
+    acceptedAt: { type: Date, default: null },
     role: { type: String, enum: ['STUDENT', 'ADMIN'], default: 'STUDENT' },
   },
   {

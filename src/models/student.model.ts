@@ -18,7 +18,29 @@ interface StudentModelInterface extends Model<StudentDocumentType> {
   getDailyIncreasedOfPendingStudents(): Promise<number>;
   getCountsOfStudentsByProgram(): Promise<Record<string, number>>;
   getCountsOfAuthenticatedStudents(): Promise<number>;
+  getPendingStudents(): Promise<HydratedDocument<StudentDocumentType>[]>;
+  getAcceptedStudents(): Promise<HydratedDocument<StudentDocumentType>[]>;
 }
+
+studentSchema.statics.getAcceptedStudents = async function (): Promise<
+  HydratedDocument<StudentDocumentType>[]
+> {
+  return await this.find({
+    isStudentVerified: true,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  }).select('_id firstName lastName middleName email studentId program acceptedAt');
+};
+
+studentSchema.statics.getPendingStudents = async function (): Promise<
+  HydratedDocument<StudentDocumentType>[]
+> {
+  return await this.find({
+    isStudentVerified: false,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  }).select('_id firstName lastName middleName email studentId program updatedAt isAuthenticated');
+};
 
 studentSchema.statics.getCountsOfAuthenticatedStudents = async function (): Promise<number> {
   return await this.countDocuments({
