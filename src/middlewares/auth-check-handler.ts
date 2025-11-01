@@ -25,3 +25,29 @@ export const authCheckHandler = (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const roleStudentCheck = (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user!;
+
+  try {
+    if (user.role !== 'STUDENT') {
+      throw new UnauthorizedError('Access denied. Student role required.');
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const roleAdminCheck = (req: Request, res: Response, next: NextFunction) => {
+  const user = req.user!;
+
+  try {
+    if (user.role !== 'ADMIN') {
+      throw new UnauthorizedError('Access denied. Admin role required.');
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
+};

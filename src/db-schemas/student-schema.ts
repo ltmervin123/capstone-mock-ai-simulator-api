@@ -11,6 +11,7 @@ const studentSchema = new mongoose.Schema(
     password: { type: String, required: true },
     isStudentVerified: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },
+    isAuthenticated: { type: Boolean, default: false },
     role: { type: String, enum: ['STUDENT', 'ADMIN'], default: 'STUDENT' },
   },
   {

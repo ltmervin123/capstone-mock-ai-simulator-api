@@ -33,3 +33,7 @@ export const signin = async (
 ): Promise<HydratedDocument<StudentDocumentType>> => {
   return await StudentModel.signin(email, password);
 };
+
+export const signout = async (id: string): Promise<void> => {
+  await StudentModel.signout(id);
+};

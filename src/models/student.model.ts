@@ -1,17 +1,109 @@
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import studentSchema from '../db-schemas/student-schema';
-import type { Student as StudentType } from '../zod-schemas/student-zod-schema';
+import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
 import { ConflictError, UnauthorizedError } from '../utils/errors';
 import { generateHash, compareHash } from '../utils/bcrypt';
+import { PROGRAM_ACRONYMS } from '../utils/student-program-option';
 
 interface StudentModelInterface extends Model<StudentDocumentType> {
   signup(studentData: StudentType): Promise<HydratedDocument<StudentDocumentType>>;
   verifyEmail(id: Types.ObjectId): Promise<void>;
   verifyStudent(id: Types.ObjectId): Promise<void>;
   signin(email: string, password: string): Promise<HydratedDocument<StudentDocumentType>>;
+  signout(id: string): Promise<void>;
+  getAllCountsOfVerifiedStudents(): Promise<number>;
+  getMonthlyIncrementedStudentCount(): Promise<number>;
+  getAllCountsOfPendingStudents(): Promise<number>;
+  getDailyIncreasedOfPendingStudents(): Promise<number>;
+  getCountsOfStudentsByProgram(): Promise<Record<string, number>>;
+  getCountsOfAuthenticatedStudents(): Promise<number>;
 }
 
+studentSchema.statics.getCountsOfAuthenticatedStudents = async function (): Promise<number> {
+  return await this.countDocuments({
+    isAuthenticated: true,
+    isStudentVerified: true,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  });
+};
+
+studentSchema.statics.getCountsOfStudentsByProgram = async function (): Promise<
+  Record<string, number>
+> {
+  const result = await this.aggregate([
+    {
+      $match: {
+        isStudentVerified: true,
+        isEmailVerified: true,
+        role: 'STUDENT',
+      },
+    },
+    {
+      $group: {
+        _id: '$program',
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const countsByAcronym: Record<string, number> = {};
+  result.forEach((item: { _id: string; count: number }) => {
+    const acronym = (PROGRAM_ACRONYMS as Record<string, string>)[item._id];
+    countsByAcronym[acronym] = item.count;
+  });
+
+  return countsByAcronym;
+};
+
+studentSchema.statics.getAllCountsOfPendingStudents = async function (): Promise<number> {
+  return await this.countDocuments({
+    isStudentVerified: false,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  });
+};
+
+studentSchema.statics.getDailyIncreasedOfPendingStudents = async function (): Promise<number> {
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(startOfDay);
+  endOfDay.setDate(endOfDay.getDate() + 1);
+
+  return await this.countDocuments({
+    createdAt: { $gte: startOfDay, $lt: endOfDay },
+    isStudentVerified: false,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  });
+};
+
+studentSchema.statics.getAllCountsOfVerifiedStudents = async function (): Promise<number> {
+  return await this.countDocuments({
+    isStudentVerified: true,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  });
+};
+
+studentSchema.statics.getMonthlyIncrementedStudentCount = async function (): Promise<number> {
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
+
+  const endOfMonth = new Date(startOfMonth);
+
+  endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+
+  return await this.countDocuments({
+    createdAt: { $gte: startOfMonth, $lt: endOfMonth },
+    isStudentVerified: true,
+    isEmailVerified: true,
+    role: 'STUDENT',
+  });
+};
 studentSchema.statics.signup = async function (
   studentData: StudentType
 ): Promise<HydratedDocument<StudentDocumentType>> {
@@ -70,11 +162,9 @@ studentSchema.statics.signin = async function (
 ): Promise<HydratedDocument<StudentDocumentType>> {
   const student: HydratedDocument<StudentDocumentType> | null = await this.findOne({
     email,
-  })
-    .select(
-      '_id firstName lastName middleName email studentId program password isStudentVerified isEmailVerified role'
-    )
-    .lean();
+  }).select(
+    '_id firstName lastName middleName email studentId program password isStudentVerified isEmailVerified role isAuthenticated'
+  );
 
   if (!student) {
     throw new UnauthorizedError('Incorrect email address.');
@@ -92,7 +182,20 @@ studentSchema.statics.signin = async function (
     throw new UnauthorizedError('Incorrect password.');
   }
 
+  if (!student.isAuthenticated) {
+    student.isAuthenticated = true;
+    await student.save();
+  }
+
   return student;
+};
+
+studentSchema.statics.signout = async function (id: string): Promise<void> {
+  const result = await this.findByIdAndUpdate(id, { isAuthenticated: false });
+
+  if (!result) {
+    throw new ConflictError('Student not found.');
+  }
 };
 
 const StudentModel = mongoose.model<StudentDocumentType, StudentModelInterface>(
