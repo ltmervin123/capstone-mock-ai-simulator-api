@@ -20,7 +20,7 @@ export const signup = async (studentData: StudentType): Promise<void> => {
     html: generateVerificationEmailTemplate(studentData.firstName, url),
   };
 
-  await QueueService.getInstance('email-service').addJob('verification-email', emailData);
+  await QueueService.getInstance('email-service').addJob('send-email', emailData);
 };
 
 export const verifyEmail = async (id: Types.ObjectId): Promise<void> => {
