@@ -14,8 +14,8 @@ const emailWorker = new Worker(
   'email-service',
   async (job: Job) => {
     try {
-      if (job.name === 'verification-email') {
-        await Email.sendEmail(job.data);
+      if (job.name === 'send-email') {
+        await Email.sendEmail(job.data as EmailData);
       }
     } catch (error) {
       throw error;

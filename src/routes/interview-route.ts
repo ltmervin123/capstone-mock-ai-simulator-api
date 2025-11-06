@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { globalRateLimiter } from '../configs/rate-limit-config';
 import * as InterviewController from '../controllers/interview-controller';
 import * as InterviewValidator from '../middlewares/interview-validator';
-import { authCheckHandler } from '../middlewares/auth-check-handler';
+import { authCheckHandler, roleStudentCheck } from '../middlewares/auth-check-handler';
 import uploadResume from '../middlewares/multer';
 const router = Router();
 
@@ -19,6 +19,7 @@ router.post(
   '/text-to-speech',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewValidator.validateTextToSpeech,
   InterviewController.convertTextToSpeech
 );
@@ -36,6 +37,7 @@ router.post(
   '/greeting-response',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewValidator.validateGenerateGreetingResponse,
   InterviewController.generateGreetingResponse
 );
@@ -53,6 +55,7 @@ router.post(
   '/follow-up-question',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewValidator.validateGenerateFollowUpQuestion,
   InterviewController.generateFollowUpQuestion
 );
@@ -70,6 +73,7 @@ router.post(
   '/make-interview-feedback',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewValidator.validateMakeInterviewFeedback,
   InterviewController.makeInterviewFeedback
 );
@@ -86,6 +90,7 @@ router.get(
   '/history',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewController.getInterviewHistory
 );
 
@@ -102,6 +107,7 @@ router.post(
   '/upload-resume',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   uploadResume,
   InterviewValidator.validateUploadResume,
   InterviewController.expertInterviewQuestions
@@ -119,6 +125,7 @@ router.get(
   '/dashboard-stats',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewController.getUserDashboardStat
 );
 
@@ -134,6 +141,7 @@ router.put(
   '/mark-as-viewed/:interviewId',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewValidator.validateInterviewIdParam,
   InterviewController.updateUserUnViewedInterviewCount
 );
@@ -149,6 +157,7 @@ router.put(
 router.get(
   '/un-viewed-interviews-count',
   authCheckHandler,
+  roleStudentCheck,
   InterviewController.getUserUnViewedInterviewCount
 );
 
@@ -164,6 +173,7 @@ router.get(
   '/:interviewId',
   globalRateLimiter,
   authCheckHandler,
+  roleStudentCheck,
   InterviewValidator.validateInterviewIdParam,
   InterviewController.getInterviewDetail
 );

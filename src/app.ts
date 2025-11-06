@@ -16,6 +16,7 @@ import { socketService } from './configs/socket-io';
 import authRoutes from './routes/auth-route';
 import interviewRoutes from './routes/interview-route';
 import behavioralQuestionRoutes from './routes/behavioral-question-route';
+import adminRoutes from './routes/admin-route';
 
 const BASE_API = '/api/v1';
 const { PORT, API_URL, CLIENT_URL } = CONFIG;
@@ -36,6 +37,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(`${BASE_API}/auth`, authRoutes);
 app.use(`${BASE_API}/interview`, interviewRoutes);
 app.use(`${BASE_API}/behavioral-questions`, behavioralQuestionRoutes);
+app.use(`${BASE_API}/admin`, adminRoutes);
 
 // catch-all route for undefined routes
 app.use((req: Request, res: Response, next: NextFunction) => {

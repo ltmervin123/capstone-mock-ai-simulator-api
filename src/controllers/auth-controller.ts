@@ -5,6 +5,7 @@ import { type VerifyEmailPayload as VerifyEmailPayloadType } from '../types/stud
 import { type SigninPayload as SigninPayloadType } from '../zod-schemas/auth-zod-schema';
 import { generateToken } from '../utils/jwt';
 import { CONFIG } from '../utils/constant-value';
+import { Types } from 'mongoose';
 
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -67,7 +68,10 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
 
 export const signout = async (req: Request, res: Response, next: NextFunction) => {
   const { NODE_ENV } = CONFIG;
+  const userId = req.user!._id;
   try {
+    await StudentService.signout(userId);
+
     res.clearCookie('authToken', {
       httpOnly: true,
       secure: NODE_ENV === 'production',
