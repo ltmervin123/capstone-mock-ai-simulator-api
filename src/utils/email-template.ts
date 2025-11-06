@@ -47,12 +47,12 @@ export function generateAccountApprovedEmailTemplate(firstName: string, link: st
               <tr>
                 <td style="padding:30px; color:#333333;">
                   <p>Hi <strong>${firstName}</strong>,</p>
-                  <p>Good news! Your account with <strong>[Your App Name]</strong> has been approved by our admin team.</p>
+                  <p>Good news! Your account with <strong>PrepWise</strong> has been approved by our admin team.</p>
                   <p>You can now log in and start exploring the platform:</p>
                   <p style="text-align:center; margin:30px 0;">
                     <a href="${link}" style="background:#15803d; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:bold;">Log In to Your Account</a>
                   </p>
-                  <p style="margin-top:30px;">Welcome aboard,<br>The <strong>[Your App Name]</strong> Team</p>
+                  <p style="margin-top:30px;">Welcome aboard,<br>The <strong>PrepWise</strong> Team</p>
                 </td>
               </tr>
             </table>
@@ -78,13 +78,13 @@ export function generateAccountRejectedEmailTemplate(firstName: string, link: st
               <tr>
                 <td style="padding:30px; color:#333333;">
                   <p>Hi <strong>${firstName}</strong>,</p>
-                  <p>Thank you for verifying your email and applying for an account with <strong>[Your App Name]</strong>.</p>
+                  <p>Thank you for verifying your email and applying for an account with <strong>PrepWise</strong>.</p>
                   <p>After review, we regret to inform you that your account <strong>was not approved</strong> at this time.</p>
                   <p>If you’d like to reapply, please update your details and submit your application again:</p>
                   <p style="text-align:center; margin:30px 0;">
                     <a href="${link}" style="background:#dc2626; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:bold;">Reapply Now</a>
                   </p>
-                  <p style="margin-top:30px;">Best regards,<br>The <strong>[Your App Name]</strong> Team</p>
+                  <p style="margin-top:30px;">Best regards,<br>The <strong>PrepWise</strong> Team</p>
                 </td>
               </tr>
             </table>

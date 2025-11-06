@@ -3,7 +3,7 @@ import {
   type GenerateFollowUpQuestionPayload,
   type GenerateGreetingResponsePayload as GreetingData,
 } from '../zod-schemas/interview-zod-schema';
-import type { ExpertInterviewArgs } from '../types/prompt';
+import type { ExpertInterviewArgs } from '../types/prompt-type';
 
 export const greeting = (data: GreetingData) => {
   const { userName, interviewerName, conversation, interviewType } = data;
