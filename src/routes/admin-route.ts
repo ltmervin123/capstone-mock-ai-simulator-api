@@ -76,6 +76,20 @@ router.get(
 );
 
 /**
+ * @route POST /api/v1/admin/behavioral-categories
+ * @description CREATE behavioral question categories
+ * @access Private (Admin only)
+ * @returns {status, message, categories}
+ */
+router.post(
+  '/behavioral-category',
+  authCheckHandler,
+  roleAdminCheck,
+  validateUpdateBehavioralQuestion,
+  AdminController.addCategory
+);
+
+/**
  * @route Get /api/v1/admin/behavioral-category/:categoryId
  * @description Get behavioral question categories
  * @access Private (Admin only)

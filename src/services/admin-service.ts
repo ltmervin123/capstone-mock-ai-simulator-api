@@ -8,6 +8,7 @@ import {
 import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
+import { BehavioralCategory } from '../types/behavioral-question-type';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -100,4 +101,8 @@ export const updateBehavioralCategoryNumberOfQuestionsToBeAnswered = async (
     categoryId,
     numberOfQuestions
   );
+};
+
+export const addCategory = async (questionData: BehavioralQuestionSchema) => {
+  await BehavioralModel.addCategory(questionData);
 };

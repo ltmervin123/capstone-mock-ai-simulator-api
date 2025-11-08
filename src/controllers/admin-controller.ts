@@ -144,3 +144,17 @@ export const updateBehavioralCategoryNumberOfQuestionsToBeAnswered = async (
     next(err);
   }
 };
+
+export const addCategory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const questionData = req.body as BehavioralQuestionSchema;
+
+    await AdminService.addCategory(questionData);
+    res.status(200).json({
+      message: `Behavioral question category updated successfully.`,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

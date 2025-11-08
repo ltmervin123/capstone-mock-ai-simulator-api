@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 export const behavioralQuestionIdSchema = z.object({
   categoryId: z
@@ -22,16 +22,23 @@ export const behavioralQuestionIdWithNumberOfQuestionsSchema = z.object({
 export const behavioralQuestionSchema = z.object({
   description: z
     .string()
+    .trim()
     .min(5, { message: 'Description must be at least 5 characters long' })
     .max(500, { message: 'Description must be at most 500 characters long' }),
   category: z
     .string()
+    .trim()
     .min(5, { message: 'Category must be at least 5 characters long' })
     .max(500, { message: 'Category must be at most 500 characters long' }),
+  numberOfQuestionToGenerate: z
+    .number()
+    .min(5, { message: 'Number of question must be at least 5' })
+    .optional(),
   questions: z
     .array(
       z
         .string()
+        .trim()
         .min(5, { message: 'Each question must be at least 5 characters long' })
         .max(500, { message: 'Each question must be at most 500 characters long' })
     )

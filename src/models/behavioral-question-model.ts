@@ -21,11 +21,18 @@ interface BehavioralModelInterface extends Model<BehavioralQuestionDocument> {
     questionData: BehavioralQuestionSchema
   ): Promise<void>;
   deleteBehavioralQuestion(categoryId: Types.ObjectId | string): Promise<void>;
+  addCategory(categoryData: BehavioralQuestionSchema): Promise<void>;
   updateBehavioralCategoryNumberOfQuestionsToBeAnswered(
     categoryId: Types.ObjectId | string,
     numberOfQuestions: number
   ): Promise<void>;
 }
+
+behavioralQuestion.statics.addCategory = async function (
+  categoryData: BehavioralCategory
+): Promise<void> {
+  await this.create(categoryData);
+};
 
 behavioralQuestion.statics.updateBehavioralCategoryNumberOfQuestionsToBeAnswered = async function (
   categoryId: Types.ObjectId | string,
@@ -58,7 +65,7 @@ behavioralQuestion.statics.deleteBehavioralQuestion = async function (
 behavioralQuestion.statics.getBehavioralCategories = async function (): Promise<
   BehavioralQuestionDocument[]
 > {
-  return await this.find().select('_id description category').lean();
+  return await this.find().select('_id description category').sort({ createdAt: -1 }).lean();
 };
 
 behavioralQuestion.statics.getBehavioralCategoriesWithQuestionsCounts = async function (): Promise<

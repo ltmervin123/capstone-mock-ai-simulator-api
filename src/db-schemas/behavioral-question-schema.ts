@@ -5,7 +5,7 @@ const behavioralQuestion = new mongoose.Schema(
     category: { type: String, required: true },
     description: { type: String, required: true },
     questions: { type: [String], required: true },
-    numberOfQuestionToGenerate: { type: Number, required: true },
+    numberOfQuestionToGenerate: { type: Number, default: 5 },
   },
   {
     timestamps: true,
