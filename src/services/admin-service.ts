@@ -1,11 +1,13 @@
 import { AdminDashboardStatsType } from '../types/admin-type';
 import StudentModel from '../models/student.model';
+import BehavioralModel from '../models/behavioral-question-model';
 import {
   generateAccountApprovedEmailTemplate,
   generateAccountRejectedEmailTemplate,
 } from '../utils/email-template';
 import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
+import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -69,4 +71,33 @@ export const resolveStudentApplication = async (
   }
 
   await QueueService.getInstance('email-service').addJob('send-email', emailData);
+};
+
+export const getBehavioralCategories = async () => {
+  return await BehavioralModel.getBehavioralCategoriesWithQuestionsCounts();
+};
+
+export const getBehavioralQuestion = async (categoryId: string) => {
+  return await BehavioralModel.getBehavioralQuestion(categoryId);
+};
+
+export const updateBehavioralQuestion = async (
+  categoryId: string,
+  questionData: BehavioralQuestionSchema
+) => {
+  await BehavioralModel.updateBehavioralQuestion(categoryId, questionData);
+};
+
+export const deleteBehavioralQuestion = async (categoryId: string) => {
+  await BehavioralModel.deleteBehavioralQuestion(categoryId);
+};
+
+export const updateBehavioralCategoryNumberOfQuestionsToBeAnswered = async (
+  categoryId: string,
+  numberOfQuestions: number
+) => {
+  await BehavioralModel.updateBehavioralCategoryNumberOfQuestionsToBeAnswered(
+    categoryId,
+    numberOfQuestions
+  );
 };

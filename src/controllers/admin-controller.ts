@@ -1,6 +1,10 @@
 import * as AdminService from '../services/admin-service';
 import { Request, Response, NextFunction } from 'express';
 import { ResolveStudentApplicationPayload } from '../zod-schemas/admin-zod-schema';
+import {
+  BehavioralQuestionIdWithNumberOfQuestionsSchema,
+  BehavioralQuestionSchema,
+} from '../zod-schemas/behavioral-question-zod-schema';
 
 export const getAdminDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -56,6 +60,84 @@ export const resolveStudentApplication = async (
 
     res.status(200).json({
       message: `Student application has been ${action === 'ACCEPT' ? 'accepted' : 'rejected'} successfully.`,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getBehavioralCategories = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const categories = await AdminService.getBehavioralCategories();
+
+    res.status(200).json({
+      message: `Behavioral question categories fetched successfully.`,
+      categories,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getBehavioralQuestion = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { categoryId } = req.params;
+    const category = await AdminService.getBehavioralQuestion(categoryId);
+    res.status(200).json({
+      message: `Behavioral question category fetched successfully.`,
+      category,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateBehavioralQuestion = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { categoryId } = req.params;
+    const questionData = req.body as BehavioralQuestionSchema;
+    await AdminService.updateBehavioralQuestion(categoryId, questionData);
+    res.status(200).json({
+      message: `Behavioral question category updated successfully.`,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteBehavioralQuestion = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { categoryId } = req.params;
+
+    await AdminService.deleteBehavioralQuestion(categoryId);
+    res.status(200).json({
+      message: `Behavioral question category deleted successfully.`,
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateBehavioralCategoryNumberOfQuestionsToBeAnswered = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { categoryId, numberOfQuestions } = res.locals
+      .validatedParams as BehavioralQuestionIdWithNumberOfQuestionsSchema;
+
+    await AdminService.updateBehavioralCategoryNumberOfQuestionsToBeAnswered(
+      categoryId,
+      numberOfQuestions
+    );
+    res.status(200).json({
+      message: `Behavioral question category updated successfully.`,
       success: true,
     });
   } catch (err) {

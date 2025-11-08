@@ -20,8 +20,8 @@ export const getBehavioralQuestionById = async (
   next: NextFunction
 ) => {
   try {
-    const { questionId } = req.params;
-    const questionData = await BehavioralQuestionService.getBehavioralQuestionById(questionId);
+    const { categoryId } = req.params;
+    const questionData = await BehavioralQuestionService.getBehavioralQuestionById(categoryId);
     res.status(200).json({
       questionData,
       success: true,

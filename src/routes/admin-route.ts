@@ -2,6 +2,11 @@ import { Router } from 'express';
 import * as AdminController from '../controllers/admin-controller';
 import { authCheckHandler, roleAdminCheck } from '../middlewares/auth-check-handler';
 import * as AdminValidator from '../middlewares/admin-validator';
+import {
+  validateBehavioralQuestionId,
+  validateUpdateBehavioralCategoryNumberOfQuestionsToBeAnswered,
+  validateUpdateBehavioralQuestion,
+} from '../middlewares/behavioral-question-validator';
 const router = Router();
 
 /**
@@ -55,6 +60,76 @@ router.put(
   roleAdminCheck,
   AdminValidator.validateResolveStudentApplication,
   AdminController.resolveStudentApplication
+);
+
+/**
+ * @route PUT /api/v1/admin/behavioral-categories
+ * @description Get behavioral question categories
+ * @access Private (Admin only)
+ * @returns {status, message, categories}
+ */
+router.get(
+  '/behavioral-categories',
+  authCheckHandler,
+  roleAdminCheck,
+  AdminController.getBehavioralCategories
+);
+
+/**
+ * @route Get /api/v1/admin/behavioral-category/:categoryId
+ * @description Get behavioral question categories
+ * @access Private (Admin only)
+ * @returns {status, message, categories}
+ */
+router.get(
+  '/behavioral-category/:categoryId',
+  authCheckHandler,
+  roleAdminCheck,
+  validateBehavioralQuestionId,
+  AdminController.getBehavioralQuestion
+);
+
+/**
+ * @route PUT /api/v1/admin/behavioral-category/:categoryId
+ * @description Update behavioral question categories
+ * @access Private (Admin only)
+ * @returns {status, message}
+ */
+router.put(
+  '/behavioral-category/:categoryId',
+  authCheckHandler,
+  roleAdminCheck,
+  validateBehavioralQuestionId,
+  validateUpdateBehavioralQuestion,
+  AdminController.updateBehavioralQuestion
+);
+
+/**
+ * @route DELETE /api/v1/admin/behavioral-category/:categoryId
+ * @description Delete behavioral question categories
+ * @access Private (Admin only)
+ * @returns {status, message}
+ */
+router.delete(
+  '/behavioral-category/:categoryId',
+  authCheckHandler,
+  roleAdminCheck,
+  validateBehavioralQuestionId,
+  AdminController.deleteBehavioralQuestion
+);
+
+/**
+ * @route UPDATE /api/v1/admin/behavioral-category/number-of-question/:categoryId
+ * @description Update the number of questions to be answered for a behavioral category
+ * @access Private (Admin only)
+ * @returns {status, message}
+ */
+router.put(
+  '/behavioral-category/number-of-question/:categoryId/:numberOfQuestions',
+  authCheckHandler,
+  roleAdminCheck,
+  validateUpdateBehavioralCategoryNumberOfQuestionsToBeAnswered,
+  AdminController.updateBehavioralCategoryNumberOfQuestionsToBeAnswered
 );
 
 export default router;
