@@ -1,6 +1,7 @@
 import { AdminDashboardStatsType } from '../types/admin-type';
 import StudentModel from '../models/student.model';
 import BehavioralModel from '../models/behavioral-question-model';
+import QuestionConfigModel from '../models/question-config-model';
 import {
   generateAccountApprovedEmailTemplate,
   generateAccountRejectedEmailTemplate,
@@ -8,7 +9,6 @@ import {
 import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
-import { BehavioralCategory } from '../types/behavioral-question-type';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -106,3 +106,11 @@ export const updateBehavioralCategoryNumberOfQuestionsToBeAnswered = async (
 export const addCategory = async (questionData: BehavioralQuestionSchema) => {
   await BehavioralModel.addCategory(questionData);
 };
+
+export const getQuestionConfig = async () => {
+  return await QuestionConfigModel.getQuestionConfig();
+}
+
+export const updateQuestionConfig = async (id: string, numberOfQuestionToGenerate: number) => {
+  await QuestionConfigModel.updateQuestionConfig(id, numberOfQuestionToGenerate);
+}

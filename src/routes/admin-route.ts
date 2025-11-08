@@ -90,6 +90,33 @@ router.post(
 );
 
 /**
+ * @route GET /api/v1/admin/question-config
+ * @description Get question configuration
+ * @access Private (Admin only)
+ * @returns {status, message, categories}
+ */
+router.put(
+  '/question-config',
+  authCheckHandler,
+  roleAdminCheck,
+  AdminController.updateQuestionConfig
+);
+
+/**
+ * @route PUT /api/v1/admin/question-config/:id/:numberOfQuestions
+ * @description Update question configuration
+ * @access Private (Admin only)
+ * @returns {status, message, categories}
+ */
+router.put(
+  '/question-config/:id/:numberOfQuestions',
+  authCheckHandler,
+  roleAdminCheck,
+  AdminValidator.validateUpdateQuestionConfig,
+  AdminController.updateQuestionConfig
+);
+
+/**
  * @route Get /api/v1/admin/behavioral-category/:categoryId
  * @description Get behavioral question categories
  * @access Private (Admin only)
