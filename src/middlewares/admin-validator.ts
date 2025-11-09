@@ -31,8 +31,8 @@ export const validateUpdateQuestionConfig = (req: Request, res: Response, next: 
 
 export const validateInterviewFilters = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = interviewFilterSchema.parse(req.body);
-    req.body = result;
+    const result = interviewFilterSchema.parse(req.query);
+    res.locals.filters = result;
     next();
   } catch (err) {
     next(err);

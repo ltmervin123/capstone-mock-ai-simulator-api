@@ -193,7 +193,7 @@ export const updateQuestionConfig = async (req: Request, res: Response, next: Ne
 
 export const getInterviews = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const filterOptions = req.body as InterviewFilterParams;
+    const filterOptions = res.locals.filters as InterviewFilterParams;
 
     const interviews = await AdminService.getInterviews(filterOptions);
 
