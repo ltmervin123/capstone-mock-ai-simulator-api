@@ -9,6 +9,8 @@ import type {
   InterviewPerformanceBreakdown as InterviewPerformanceBreakdownType,
   InterviewTypeScores as InterviewTypeScoresType,
   InterviewHighestScore as InterviewHighestScoreType,
+  FilterOptions,
+  InterviewPreview,
 } from '../types/interview-type';
 import { DAILY_LABELS, MONTHLY_LABELS, WEEKLY_LABELS } from '../utils/date-labels';
 
@@ -30,7 +32,107 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
   getUserInterviewTypeScores(studentId: string): Promise<InterviewTypeScoresType>;
   getUserUnViewedInterviewCount(studentId: string): Promise<number>;
   updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
+  getInterviews(filterOptions: FilterOptions): Promise<InterviewPreview[]>;
 }
+
+/**
+ * For future reference read each block comments if modification is needed in this static meth   od
+ * What it does: Retrieves interviews based on various filter options such as program, interview type,
+ * date range, and score sorting preference. It performs aggregation with lookup to join student data,
+ * applies filters, projects necessary fields, and sorts the results accordingly.
+ * Default Sort: Newest interviews first, then highest scores as tiebreaker
+ *
+ * Author: Alvin
+ */
+interviewSchema.statics.getInterviews = async function (
+  filterOptions: FilterOptions
+): Promise<InterviewPreview[]> {
+  // Initialize empty match stage for MongoDB aggregation filtering
+  const matchStage: any = {};
+
+  let sortStage: any = {
+    createdAt: -1,
+    totalScore: -1,
+  };
+
+  if (filterOptions) {
+    // Override sort if score filter is explicitly provided
+    if (filterOptions.score) {
+      // Sort by score: -1 for HIGHEST (desc), 1 for LOWEST (asc)
+
+      sortStage = {
+        totalScore: filterOptions.score === 'HIGHEST' ? -1 : 1,
+        createdAt: -1,
+      };
+    }
+
+    // Filter by student's program (e.g., BSBA, BSIT, BSCrim)
+    if (filterOptions.program) {
+      matchStage['studentId.program'] = filterOptions.program;
+    }
+
+    // Filter by interview type (Basic, Behavioral, Expert)
+    if (filterOptions.interviewType) {
+      matchStage['interviewType'] = filterOptions.interviewType;
+    }
+
+    // Filter by date range (from and/or to dates)
+    if (filterOptions.dateFrom || filterOptions.dateTo) {
+      matchStage['createdAt'] = {};
+      // Filter interviews created on or after dateFrom
+      if (filterOptions.dateFrom) {
+        matchStage['createdAt'].$gte = filterOptions.dateFrom;
+      }
+      // Filter interviews created on or before dateTo
+      if (filterOptions.dateTo) {
+        matchStage['createdAt'].$lte = filterOptions.dateTo;
+      }
+    }
+  }
+
+  return await this.aggregate([
+    // Stage 1: Join interviews collection with students collection
+    {
+      $lookup: {
+        from: 'students', // Target collection
+        localField: 'studentId', // Field in interviews collection
+        foreignField: '_id', // Field in students collection
+        as: 'studentId', // Output array field name
+      },
+    },
+
+    // Stage 2: Convert studentId array to single object
+    { $unwind: '$studentId' },
+
+    // Stage 3: Apply all filter conditions
+    { $match: matchStage },
+
+    // Stage 4: Shape the output document structure
+    {
+      $project: {
+        _id: 1, // Include interview ID
+        interviewType: 1, // Include interview type
+        createdAt: 1, // Include creation date
+        totalScore: '$scores.totalScore', // Extract totalScore from scores object
+        program: '$studentId.program', // Extract program from joined student
+        studentFullName: {
+          // Concatenate student's full name
+          $concat: [
+            '$studentId.firstName',
+            ' ',
+            '$studentId.middleName',
+            ' ',
+            '$studentId.lastName',
+          ],
+        },
+      },
+    },
+
+    // Stage 5: Sort results based on sortStage criteria
+    { $sort: sortStage },
+  ]);
+};
+
 interviewSchema.statics.createInterview = async function (
   interviewData: InterviewClientDocumentType
 ): Promise<void> {
