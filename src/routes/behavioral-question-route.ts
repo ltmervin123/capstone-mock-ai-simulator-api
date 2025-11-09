@@ -21,14 +21,14 @@ router.get(
 );
 
 /**
- * @route GET /api/v1/behavioral-questions/:questionId
+ * @route GET /api/v1/behavioral-questions/:categoryId
  * @description Retrieve a specific behavioral question
  * @access Public
  * @rateLimit globalRateLimiter
  * @returns {status, message, question}
  */
 router.get(
-  '/:questionId',
+  '/:categoryId',
   globalRateLimiter,
   authCheckHandler,
   roleStudentCheck,
