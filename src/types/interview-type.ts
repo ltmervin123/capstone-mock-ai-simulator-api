@@ -1,5 +1,6 @@
 import { InferSchemaType } from 'mongoose';
 import interviewSchema from '../db-schemas/interview-schema.js';
+import { InterviewFilterParams } from '../zod-schemas/admin-zod-schema.js';
 
 export type InterviewClientDocument = {
   interviewType: 'Basic' | 'Behavioral' | 'Expert';
@@ -86,3 +87,25 @@ export type InterviewHighestScore = {
   createdAt: Date;
   score: number;
 };
+
+export type Programs =
+  | 'Bachelor of Science in Business Administration'
+  | 'Bachelor of Science in Information Technology'
+  | 'Bachelor of Science in Criminology'
+  | 'Bachelor of Science in Hospitality Management'
+  | 'Bachelor of Science in Education'
+  | 'Bachelor of Elementary Education';
+
+export type InterviewTypes = 'Basic' | 'Behavioral' | 'Expert';
+
+export type FilterOptions = InterviewFilterParams | null;
+
+
+export type InterviewPreview = {
+  _id: string;
+  interviewType: InterviewTypes;
+  createdAt: Date;
+  program: Programs;
+  studentFullName: string;
+  totalScore: number;
+}

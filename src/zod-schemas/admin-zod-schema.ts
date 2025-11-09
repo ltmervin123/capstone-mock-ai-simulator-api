@@ -20,6 +20,35 @@ export const questionConfig = z.object({
     .refine((val) => val >= 5, { message: 'numberOfQuestions must be greater than or equal to 5' }),
 });
 
+export const interviewFilterSchema = z
+  .object({
+    program: z
+      .enum([
+        'Bachelor of Science in Business Administration',
+        'Bachelor of Science in Information Technology',
+        'Bachelor of Science in Criminology',
+        'Bachelor of Science in Hospitality Management',
+        'Bachelor of Science in Education',
+        'Bachelor of Elementary Education',
+      ])
+      .optional(),
+    interviewType: z.enum(['Basic', 'Behavioral', 'Expert']).optional(),
+    score: z.enum(['HIGHEST', 'LOWEST']).optional(),
+    dateFrom: z
+      .string()
+      .transform((val) => new Date(val))
+      .refine((val) => !isNaN(val.getTime()), { message: 'dateFrom must be a valid date' })
+      .optional(),
+    dateTo: z
+      .string()
+      .transform((val) => new Date(val))
+      .refine((val) => !isNaN(val.getTime()), { message: 'dateTo must be a valid date' })
+      .optional(),
+  })
+  .nullable();
+
 export type ResolveStudentApplicationPayload = z.infer<typeof resolveStudentApplicationSchema>;
 
 export type QuestionConfigParams = z.infer<typeof questionConfig>;
+
+export type InterviewFilterParams = z.infer<typeof interviewFilterSchema>;

@@ -2,6 +2,7 @@ import { AdminDashboardStatsType } from '../types/admin-type';
 import StudentModel from '../models/student.model';
 import BehavioralModel from '../models/behavioral-question-model';
 import QuestionConfigModel from '../models/question-config-model';
+import InterviewModel from '../models/interview-model';
 import {
   generateAccountApprovedEmailTemplate,
   generateAccountRejectedEmailTemplate,
@@ -9,6 +10,7 @@ import {
 import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
+import { FilterOptions } from '../types/interview-type';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -109,8 +111,12 @@ export const addCategory = async (questionData: BehavioralQuestionSchema) => {
 
 export const getQuestionConfig = async () => {
   return await QuestionConfigModel.getQuestionConfig();
-}
+};
 
 export const updateQuestionConfig = async (id: string, numberOfQuestionToGenerate: number) => {
   await QuestionConfigModel.updateQuestionConfig(id, numberOfQuestionToGenerate);
-}
+};
+
+export const getInterviews = async (filterOptions: FilterOptions) => {
+  return await InterviewModel.getInterviews(filterOptions);
+};

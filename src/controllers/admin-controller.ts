@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
   ResolveStudentApplicationPayload,
   QuestionConfigParams,
+  InterviewFilterParams,
 } from '../zod-schemas/admin-zod-schema';
 import {
   BehavioralQuestionIdWithNumberOfQuestionsSchema,
@@ -184,6 +185,22 @@ export const updateQuestionConfig = async (req: Request, res: Response, next: Ne
     res.status(200).json({
       message: `Behavioral question category updated successfully.`,
       success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getInterviews = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const filterOptions = req.body as InterviewFilterParams;
+
+    const interviews = await AdminService.getInterviews(filterOptions);
+
+    res.status(200).json({
+      message: 'Interviews fetched successfully.',
+      success: true,
+      interviews,
     });
   } catch (err) {
     next(err);

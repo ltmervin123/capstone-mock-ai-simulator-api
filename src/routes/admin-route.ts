@@ -98,6 +98,21 @@ router.post(
 router.get('/question-config', authCheckHandler, roleAdminCheck, AdminController.getQuestionConfig);
 
 /**
+ * @route GET /api/v1/admin/interviews
+ * @description Retrieve list of interviews with optional filters
+ * @access Private (Admin only)
+ * @body {program?, interviewType?, score?, dateFrom?, dateTo?}
+ * @returns {status, message, interviews}
+ */
+router.get(
+  '/interviews',
+  authCheckHandler,
+  roleAdminCheck,
+  AdminValidator.validateInterviewFilters,
+  AdminController.getInterviews
+);
+
+/**
  * @route PUT /api/v1/admin/question-config/:id/:numberOfQuestions
  * @description Update question configuration
  * @access Private (Admin only)
