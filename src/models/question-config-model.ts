@@ -3,14 +3,14 @@ import { NotFoundError } from '../utils/errors';
 import questionConfig from '../db-schemas/question-config-schema';
 import { QuestionConfigDocument } from '../types/question-config-type';
 interface QuestionConfigInterface extends Model<QuestionConfigDocument> {
-  getQuestionConfig(): Promise<HydratedDocument<QuestionConfigDocument>>;
+  getQuestionConfig(): Promise<HydratedDocument<QuestionConfigDocument>[]>;
   updateQuestionConfig(id: string, numberOfQuestionToGenerate: number): Promise<void>;
 }
 
 questionConfig.statics.getQuestionConfig = async function (): Promise<
-  HydratedDocument<QuestionConfigDocument>
+  HydratedDocument<QuestionConfigDocument>[]
 > {
-  return await this.findOne();
+  return await this.find();
 };
 
 questionConfig.statics.updateQuestionConfig = async function (

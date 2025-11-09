@@ -95,12 +95,7 @@ router.post(
  * @access Private (Admin only)
  * @returns {status, message, categories}
  */
-router.put(
-  '/question-config',
-  authCheckHandler,
-  roleAdminCheck,
-  AdminController.updateQuestionConfig
-);
+router.get('/question-config', authCheckHandler, roleAdminCheck, AdminController.getQuestionConfig);
 
 /**
  * @route PUT /api/v1/admin/question-config/:id/:numberOfQuestions
