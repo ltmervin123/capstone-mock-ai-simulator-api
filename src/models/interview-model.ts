@@ -34,40 +34,34 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
   getUserUnViewedInterviewCount(studentId: string): Promise<number>;
   updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
   getInterviews(filterOptions: FilterOptions): Promise<InterviewPreview[]>;
-  getAdminInterviewReports(interviewId: string): Promise<InterviewAdminReportDocument[]>;
+  getAdminInterviewReports(interviewId: string): Promise<InterviewAdminReportDocument>;
 }
 
 interviewSchema.statics.getAdminInterviewReports = async function (
   interviewId: string
-): Promise<InterviewAdminReportDocument[]> {
-  return await this.aggregate([
-    { $match: { _id: new Types.ObjectId(interviewId) } },
+): Promise<InterviewAdminReportDocument> {
+  const interview = await this.findOne({ _id: interviewId })
+    .populate('studentId', 'firstName lastName middleName')
+    .select('interviewType duration numberOfQuestions scores feedbacks createdAt')
+    .lean();
 
-    {
-      $lookup: {
-        from: 'students',
-        localField: 'studentId',
-        foreignField: '_id',
-        as: 'student',
-      },
+  if (!interview) {
+    throw new NotFoundError('Interview not found');
+  }
+
+  return {
+    interviewType: interview.interviewType,
+    duration: interview.duration,
+    numberOfQuestions: interview.numberOfQuestions,
+    scores: interview.scores,
+    feedbacks: interview.feedbacks,
+    createdAt: interview.createdAt,
+    student: {
+      firstName: interview.studentId.firstName,
+      lastName: interview.studentId.lastName,
+      middleName: interview.studentId.middleName,
     },
-    { $unwind: '$student' },
-    {
-      $project: {
-        interviewType: 1,
-        duration: 1,
-        numberOfQuestions: 1,
-        scores: 1,
-        feedbacks: 1,
-        createdAt: 1,
-        student: {
-          firstName: '$student.firstName',
-          lastName: '$student.lastName',
-          middleName: '$student.middleName',
-        },
-      },
-    },
-  ]);
+  };
 };
 
 /**
