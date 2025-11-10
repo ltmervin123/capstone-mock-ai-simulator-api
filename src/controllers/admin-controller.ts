@@ -206,3 +206,19 @@ export const getInterviews = async (req: Request, res: Response, next: NextFunct
     next(err);
   }
 };
+
+export const getAdminInterviewReports = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { interviewId } = req.params;
+
+    const interview = await AdminService.getAdminInterviewReports(interviewId);
+
+    res.status(200).json({
+      message: 'Admin interview reports fetched successfully.',
+      success: true,
+      interview,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

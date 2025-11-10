@@ -7,6 +7,7 @@ import {
   validateUpdateBehavioralCategoryNumberOfQuestionsToBeAnswered,
   validateUpdateBehavioralQuestion,
 } from '../middlewares/behavioral-question-validator';
+import { validateInterviewIdParam } from '../middlewares/interview-validator';
 const router = Router();
 
 /**
@@ -110,6 +111,20 @@ router.get(
   roleAdminCheck,
   AdminValidator.validateInterviewFilters,
   AdminController.getInterviews
+);
+
+/**
+ * @route GET /api/v1/admin/interview/:interviewId
+ * @description Retrieve admin interview reports
+ * @access Private (Admin only)
+ * @returns {status, message, interview}
+ */
+router.get(
+  '/interview/:interviewId',
+  authCheckHandler,
+  roleAdminCheck,
+  validateInterviewIdParam,
+  AdminController.getAdminInterviewReports
 );
 
 /**

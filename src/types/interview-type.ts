@@ -25,6 +25,17 @@ export type InterviewClientDocument = {
   updatedAt?: Date;
 };
 
+export type InterviewAdminReportDocument = Pick<
+  InterviewClientDocument,
+  'interviewType' | 'duration' | 'numberOfQuestions' | 'scores' | 'feedbacks' | 'createdAt'
+> & {
+  student: {
+    firstName: string;
+    lastName: string;
+    middleName: string;
+  };
+};
+
 export type InterviewDocument = InferSchemaType<typeof interviewSchema>;
 
 export type InterviewHistory = {
@@ -100,7 +111,6 @@ export type InterviewTypes = 'Basic' | 'Behavioral' | 'Expert';
 
 export type FilterOptions = InterviewFilterParams | null;
 
-
 export type InterviewPreview = {
   _id: string;
   interviewType: InterviewTypes;
@@ -108,4 +118,4 @@ export type InterviewPreview = {
   program: Programs;
   studentFullName: string;
   totalScore: number;
-}
+};

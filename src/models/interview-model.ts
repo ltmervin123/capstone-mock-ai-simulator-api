@@ -11,6 +11,7 @@ import type {
   InterviewHighestScore as InterviewHighestScoreType,
   FilterOptions,
   InterviewPreview,
+  InterviewAdminReportDocument,
 } from '../types/interview-type';
 import { DAILY_LABELS, MONTHLY_LABELS, WEEKLY_LABELS } from '../utils/date-labels';
 
@@ -33,10 +34,44 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
   getUserUnViewedInterviewCount(studentId: string): Promise<number>;
   updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
   getInterviews(filterOptions: FilterOptions): Promise<InterviewPreview[]>;
+  getAdminInterviewReports(interviewId: string): Promise<InterviewAdminReportDocument[]>;
 }
 
+interviewSchema.statics.getAdminInterviewReports = async function (
+  interviewId: string
+): Promise<InterviewAdminReportDocument[]> {
+  return await this.aggregate([
+    { $match: { _id: new Types.ObjectId(interviewId) } },
+
+    {
+      $lookup: {
+        from: 'students',
+        localField: 'studentId',
+        foreignField: '_id',
+        as: 'student',
+      },
+    },
+    { $unwind: '$student' },
+    {
+      $project: {
+        interviewType: 1,
+        duration: 1,
+        numberOfQuestions: 1,
+        scores: 1,
+        feedbacks: 1,
+        createdAt: 1,
+        student: {
+          firstName: '$student.firstName',
+          lastName: '$student.lastName',
+          middleName: '$student.middleName',
+        },
+      },
+    },
+  ]);
+};
+
 /**
- * For future reference read each block comments if modification is needed in this static meth   od
+ * For future reference read each block comments if modification is needed in this static method
  * What it does: Retrieves interviews based on various filter options such as program, interview type,
  * date range, and score sorting preference. It performs aggregation with lookup to join student data,
  * applies filters, projects necessary fields, and sorts the results accordingly.

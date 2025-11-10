@@ -120,3 +120,7 @@ export const updateQuestionConfig = async (id: string, numberOfQuestionToGenerat
 export const getInterviews = async (filterOptions: FilterOptions) => {
   return await InterviewModel.getInterviews(filterOptions);
 };
+
+export const getAdminInterviewReports = async (interviewId: string) => {
+  return await InterviewModel.getAdminInterviewReports(interviewId);
+};
