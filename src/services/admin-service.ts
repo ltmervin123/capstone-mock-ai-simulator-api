@@ -20,6 +20,7 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     dailyNewPendingStudents,
     studentsCountsByProgram,
     authenticatedStudents,
+    topInterviewPerformers,
   ] = await Promise.all([
     StudentModel.getAllCountsOfVerifiedStudents(),
     StudentModel.getMonthlyIncrementedStudentCount(),
@@ -27,6 +28,7 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     StudentModel.getDailyIncreasedOfPendingStudents(),
     StudentModel.getCountsOfStudentsByProgram(),
     StudentModel.getCountsOfAuthenticatedStudents(),
+    InterviewModel.getTopInterviewPerformers(),
   ]);
 
   return {
@@ -36,6 +38,7 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     dailyNewPendingStudents,
     studentsCountsByProgram,
     authenticatedStudents,
+    topInterviewPerformers,
   };
 };
 

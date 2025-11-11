@@ -12,6 +12,7 @@ import type {
   FilterOptions,
   InterviewPreview,
   InterviewAdminReportDocument,
+  TopInterviewPerformers,
 } from '../types/interview-type';
 import { DAILY_LABELS, MONTHLY_LABELS, WEEKLY_LABELS } from '../utils/date-labels';
 
@@ -35,7 +36,53 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
   updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
   getInterviews(filterOptions: FilterOptions): Promise<InterviewPreview[]>;
   getAdminInterviewReports(interviewId: string): Promise<InterviewAdminReportDocument>;
+  getTopInterviewPerformers(): Promise<TopInterviewPerformers[]>;
 }
+
+interviewSchema.statics.getTopInterviewPerformers = async function (): Promise<
+  TopInterviewPerformers[]
+> {
+  return await this.aggregate([
+    {
+      $group: {
+        _id: '$studentId',
+        averageScore: { $avg: '$scores.totalScore' },
+        totalInterviews: { $sum: 1 },
+      },
+    },
+    {
+      $lookup: {
+        from: 'students',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'student',
+      },
+    },
+    { $unwind: '$student' },
+    {
+      $project: {
+        averageScore: { $round: ['$averageScore', 2] },
+        totalInterviews: 1,
+        student: {
+          firstName: '$student.firstName',
+          lastName: '$student.lastName',
+          middleName: '$student.middleName',
+        },
+        program: '$student.program',
+      },
+    },
+    { $sort: { averageScore: -1 } },
+    {
+      $setWindowFields: {
+        sortBy: { averageScore: -1 },
+        output: {
+          rank: { $rank: {} },
+        },
+      },
+    },
+    { $limit: 10 },
+  ]);
+};
 
 interviewSchema.statics.getAdminInterviewReports = async function (
   interviewId: string

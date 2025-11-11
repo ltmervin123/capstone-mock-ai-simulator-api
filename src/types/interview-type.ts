@@ -36,6 +36,18 @@ export type InterviewAdminReportDocument = Pick<
   };
 };
 
+export type TopInterviewPerformers = {
+  student: {
+    firstName: string;
+    lastName: string;
+    middleName: string;
+  };
+  averageScore: number;
+  program: Programs;
+  totalInterviews: number;
+  rank: number;
+};
+
 export type InterviewDocument = InferSchemaType<typeof interviewSchema>;
 
 export type InterviewHistory = {
