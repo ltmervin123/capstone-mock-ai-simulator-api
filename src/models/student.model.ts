@@ -54,7 +54,7 @@ studentSchema.statics.getAcceptedStudents = async function (): Promise<
     isStudentVerified: true,
     isEmailVerified: true,
     role: 'STUDENT',
-  }).select('_id firstName lastName middleName email studentId program acceptedAt');
+  }).select('_id firstName lastName middleName email studentId program acceptedAt isAuthenticated');
 };
 
 studentSchema.statics.getPendingStudents = async function (): Promise<
