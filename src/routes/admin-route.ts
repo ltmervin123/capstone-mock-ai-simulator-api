@@ -33,6 +33,7 @@ router.get(
   '/pending-students',
   authCheckHandler,
   roleAdminCheck,
+  AdminValidator.validateSearchStudentFilters,
   AdminController.getPendingStudents
 );
 
@@ -46,6 +47,7 @@ router.get(
   '/accepted-students',
   authCheckHandler,
   roleAdminCheck,
+  AdminValidator.validateSearchStudentFilters,
   AdminController.getAcceptedStudents
 );
 

@@ -1,10 +1,11 @@
 import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import studentSchema from '../db-schemas/student-schema';
-import { student, type Student as StudentType } from '../zod-schemas/student-zod-schema';
+import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
 import { ConflictError, UnauthorizedError } from '../utils/errors';
 import { generateHash, compareHash } from '../utils/bcrypt';
 import { PROGRAM_ACRONYMS } from '../utils/student-program-option';
+import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
 
 interface StudentModelInterface extends Model<StudentDocumentType> {
   signup(studentData: StudentType): Promise<HydratedDocument<StudentDocumentType>>;
@@ -18,8 +19,12 @@ interface StudentModelInterface extends Model<StudentDocumentType> {
   getDailyIncreasedOfPendingStudents(): Promise<number>;
   getCountsOfStudentsByProgram(): Promise<Record<string, number>>;
   getCountsOfAuthenticatedStudents(): Promise<number>;
-  getPendingStudents(): Promise<HydratedDocument<StudentDocumentType>[]>;
-  getAcceptedStudents(): Promise<HydratedDocument<StudentDocumentType>[]>;
+  getPendingStudents(
+    filterOptions: StudentFilterParams
+  ): Promise<HydratedDocument<StudentDocumentType>[]>;
+  getAcceptedStudents(
+    filterOptions: StudentFilterParams
+  ): Promise<HydratedDocument<StudentDocumentType>[]>;
   acceptStudent(id: string): Promise<StudentDocumentType>;
   rejectStudent(id: string): Promise<StudentDocumentType>;
 }
@@ -47,9 +52,33 @@ studentSchema.statics.acceptStudent = async function (id: string): Promise<Stude
   return acceptedStudent;
 };
 
-studentSchema.statics.getAcceptedStudents = async function (): Promise<
-  HydratedDocument<StudentDocumentType>[]
-> {
+studentSchema.statics.getAcceptedStudents = async function (
+  filterOptions: StudentFilterParams
+): Promise<HydratedDocument<StudentDocumentType>[]> {
+  if (filterOptions?.name) {
+    const nameRegex = new RegExp(`^${filterOptions.name}`, 'i');
+    return await this.find({
+      isStudentVerified: true,
+      isEmailVerified: true,
+      role: 'STUDENT',
+      $or: [{ firstName: nameRegex }, { lastName: nameRegex }, { middleName: nameRegex }],
+    }).select(
+      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
+    );
+  }
+
+  if (filterOptions?.studentId) {
+    const studentIdRegex = new RegExp(`^${filterOptions.studentId}`, 'i');
+    return await this.find({
+      isStudentVerified: true,
+      isEmailVerified: true,
+      role: 'STUDENT',
+      studentId: studentIdRegex,
+    }).select(
+      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
+    );
+  }
+
   return await this.find({
     isStudentVerified: true,
     isEmailVerified: true,
@@ -57,14 +86,38 @@ studentSchema.statics.getAcceptedStudents = async function (): Promise<
   }).select('_id firstName lastName middleName email studentId program acceptedAt isAuthenticated');
 };
 
-studentSchema.statics.getPendingStudents = async function (): Promise<
-  HydratedDocument<StudentDocumentType>[]
-> {
+studentSchema.statics.getPendingStudents = async function (
+  filterOptions: StudentFilterParams
+): Promise<HydratedDocument<StudentDocumentType>[]> {
+  if (filterOptions?.name) {
+    const nameRegex = new RegExp(`^${filterOptions.name}`, 'i');
+    return await this.find({
+      isStudentVerified: false,
+      isEmailVerified: true,
+      role: 'STUDENT',
+      $or: [{ firstName: nameRegex }, { lastName: nameRegex }, { middleName: nameRegex }],
+    }).select(
+      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
+    );
+  }
+
+  if (filterOptions?.studentId) {
+    const studentIdRegex = new RegExp(`^${filterOptions.studentId}`, 'i');
+    return await this.find({
+      isStudentVerified: false,
+      isEmailVerified: true,
+      role: 'STUDENT',
+      studentId: studentIdRegex,
+    }).select(
+      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
+    );
+  }
+
   return await this.find({
     isStudentVerified: false,
     isEmailVerified: true,
     role: 'STUDENT',
-  }).select('_id firstName lastName middleName email studentId program updatedAt isAuthenticated');
+  }).select('_id firstName lastName middleName email studentId program acceptedAt isAuthenticated');
 };
 
 studentSchema.statics.getCountsOfAuthenticatedStudents = async function (): Promise<number> {

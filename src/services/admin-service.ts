@@ -11,6 +11,7 @@ import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
 import { FilterOptions } from '../types/interview-type';
+import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -42,12 +43,12 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
   };
 };
 
-export const getPendingStudents = async () => {
-  return await StudentModel.getPendingStudents();
+export const getPendingStudents = async (filterOptions: StudentFilterParams) => {
+  return await StudentModel.getPendingStudents(filterOptions);
 };
 
-export const getAcceptedStudents = async () => {
-  return await StudentModel.getAcceptedStudents();
+export const getAcceptedStudents = async (filterOptions: StudentFilterParams) => {
+  return await StudentModel.getAcceptedStudents(filterOptions);
 };
 
 export const resolveStudentApplication = async (
