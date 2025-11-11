@@ -47,8 +47,17 @@ export const interviewFilterSchema = z
   })
   .nullable();
 
+export const studentFilterSchema = z
+  .object({
+    name: z.string().optional(),
+    studentId: z.string().optional(),
+  })
+  .nullable();
+
 export type ResolveStudentApplicationPayload = z.infer<typeof resolveStudentApplicationSchema>;
 
 export type QuestionConfigParams = z.infer<typeof questionConfig>;
 
 export type InterviewFilterParams = z.infer<typeof interviewFilterSchema>;
+
+export type StudentFilterParams = z.infer<typeof studentFilterSchema>;

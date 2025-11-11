@@ -11,6 +11,8 @@ import type {
   InterviewHighestScore as InterviewHighestScoreType,
   FilterOptions,
   InterviewPreview,
+  InterviewAdminReportDocument,
+  TopInterviewPerformers,
 } from '../types/interview-type';
 import { DAILY_LABELS, MONTHLY_LABELS, WEEKLY_LABELS } from '../utils/date-labels';
 
@@ -33,10 +35,84 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
   getUserUnViewedInterviewCount(studentId: string): Promise<number>;
   updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
   getInterviews(filterOptions: FilterOptions): Promise<InterviewPreview[]>;
+  getAdminInterviewReports(interviewId: string): Promise<InterviewAdminReportDocument>;
+  getTopInterviewPerformers(): Promise<TopInterviewPerformers[]>;
 }
 
+interviewSchema.statics.getTopInterviewPerformers = async function (): Promise<
+  TopInterviewPerformers[]
+> {
+  return await this.aggregate([
+    {
+      $group: {
+        _id: '$studentId',
+        averageScore: { $avg: '$scores.totalScore' },
+        totalInterviews: { $sum: 1 },
+      },
+    },
+    {
+      $lookup: {
+        from: 'students',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'student',
+      },
+    },
+    { $unwind: '$student' },
+    {
+      $project: {
+        averageScore: { $round: ['$averageScore', 2] },
+        totalInterviews: 1,
+        student: {
+          firstName: '$student.firstName',
+          lastName: '$student.lastName',
+          middleName: '$student.middleName',
+        },
+        program: '$student.program',
+      },
+    },
+    { $sort: { averageScore: -1 } },
+    {
+      $setWindowFields: {
+        sortBy: { averageScore: -1 },
+        output: {
+          rank: { $rank: {} },
+        },
+      },
+    },
+    { $limit: 10 },
+  ]);
+};
+
+interviewSchema.statics.getAdminInterviewReports = async function (
+  interviewId: string
+): Promise<InterviewAdminReportDocument> {
+  const interview = await this.findOne({ _id: interviewId })
+    .populate('studentId', 'firstName lastName middleName')
+    .select('interviewType duration numberOfQuestions scores feedbacks createdAt')
+    .lean();
+
+  if (!interview) {
+    throw new NotFoundError('Interview not found');
+  }
+
+  return {
+    interviewType: interview.interviewType,
+    duration: interview.duration,
+    numberOfQuestions: interview.numberOfQuestions,
+    scores: interview.scores,
+    feedbacks: interview.feedbacks,
+    createdAt: interview.createdAt,
+    student: {
+      firstName: interview.studentId.firstName,
+      lastName: interview.studentId.lastName,
+      middleName: interview.studentId.middleName,
+    },
+  };
+};
+
 /**
- * For future reference read each block comments if modification is needed in this static meth   od
+ * For future reference read each block comments if modification is needed in this static method
  * What it does: Retrieves interviews based on various filter options such as program, interview type,
  * date range, and score sorting preference. It performs aggregation with lookup to join student data,
  * applies filters, projects necessary fields, and sorts the results accordingly.

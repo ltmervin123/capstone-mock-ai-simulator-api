@@ -4,6 +4,7 @@ import {
   ResolveStudentApplicationPayload,
   QuestionConfigParams,
   InterviewFilterParams,
+  StudentFilterParams,
 } from '../zod-schemas/admin-zod-schema';
 import {
   BehavioralQuestionIdWithNumberOfQuestionsSchema,
@@ -26,7 +27,8 @@ export const getAdminDashboardStats = async (req: Request, res: Response, next: 
 
 export const getPendingStudents = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const pendingStudents = await AdminService.getPendingStudents();
+    const filterOptions = res.locals.filters as StudentFilterParams;
+    const pendingStudents = await AdminService.getPendingStudents(filterOptions);
 
     res.status(200).json({
       message: 'Pending students fetched successfully.',
@@ -40,7 +42,8 @@ export const getPendingStudents = async (req: Request, res: Response, next: Next
 
 export const getAcceptedStudents = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const acceptedStudents = await AdminService.getAcceptedStudents();
+    const filterOptions = res.locals.filters as StudentFilterParams;
+    const acceptedStudents = await AdminService.getAcceptedStudents(filterOptions);
 
     res.status(200).json({
       message: 'Accepted students fetched successfully.',
@@ -201,6 +204,22 @@ export const getInterviews = async (req: Request, res: Response, next: NextFunct
       message: 'Interviews fetched successfully.',
       success: true,
       interviews,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getAdminInterviewReports = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { interviewId } = req.params;
+
+    const interview = await AdminService.getAdminInterviewReports(interviewId);
+
+    res.status(200).json({
+      message: 'Admin interview reports fetched successfully.',
+      success: true,
+      interview,
     });
   } catch (err) {
     next(err);

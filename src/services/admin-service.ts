@@ -11,6 +11,7 @@ import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
 import { FilterOptions } from '../types/interview-type';
+import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -20,6 +21,7 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     dailyNewPendingStudents,
     studentsCountsByProgram,
     authenticatedStudents,
+    topInterviewPerformers,
   ] = await Promise.all([
     StudentModel.getAllCountsOfVerifiedStudents(),
     StudentModel.getMonthlyIncrementedStudentCount(),
@@ -27,6 +29,7 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     StudentModel.getDailyIncreasedOfPendingStudents(),
     StudentModel.getCountsOfStudentsByProgram(),
     StudentModel.getCountsOfAuthenticatedStudents(),
+    InterviewModel.getTopInterviewPerformers(),
   ]);
 
   return {
@@ -36,15 +39,16 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     dailyNewPendingStudents,
     studentsCountsByProgram,
     authenticatedStudents,
+    topInterviewPerformers,
   };
 };
 
-export const getPendingStudents = async () => {
-  return await StudentModel.getPendingStudents();
+export const getPendingStudents = async (filterOptions: StudentFilterParams) => {
+  return await StudentModel.getPendingStudents(filterOptions);
 };
 
-export const getAcceptedStudents = async () => {
-  return await StudentModel.getAcceptedStudents();
+export const getAcceptedStudents = async (filterOptions: StudentFilterParams) => {
+  return await StudentModel.getAcceptedStudents(filterOptions);
 };
 
 export const resolveStudentApplication = async (
@@ -119,4 +123,8 @@ export const updateQuestionConfig = async (id: string, numberOfQuestionToGenerat
 
 export const getInterviews = async (filterOptions: FilterOptions) => {
   return await InterviewModel.getInterviews(filterOptions);
+};
+
+export const getAdminInterviewReports = async (interviewId: string) => {
+  return await InterviewModel.getAdminInterviewReports(interviewId);
 };

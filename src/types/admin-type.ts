@@ -1,3 +1,5 @@
+import { TopInterviewPerformers } from './interview-type';
+
 export type AdminDashboardStatsType = {
   totalVerifiedStudents: number;
   monthlyNewStudents: number;
@@ -5,5 +7,5 @@ export type AdminDashboardStatsType = {
   dailyNewPendingStudents: number;
   studentsCountsByProgram: Record<string, number>;
   authenticatedStudents: number;
+  topInterviewPerformers: TopInterviewPerformers[];
 };
-  
