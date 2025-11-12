@@ -171,3 +171,16 @@ export const updateUserUnViewedInterviewCount = async (
     next(error);
   }
 };
+
+export const getQuestionConfig = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const questionConfig = await InterviewService.getQuestionConfig();
+    res.json({
+      success: true,
+      message: 'Question configuration retrieved successfully',
+      questionConfig,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

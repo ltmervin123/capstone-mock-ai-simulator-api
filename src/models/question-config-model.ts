@@ -5,7 +5,20 @@ import { QuestionConfigDocument } from '../types/question-config-type';
 interface QuestionConfigInterface extends Model<QuestionConfigDocument> {
   getQuestionConfig(): Promise<HydratedDocument<QuestionConfigDocument>[]>;
   updateQuestionConfig(id: string, numberOfQuestionToGenerate: number): Promise<void>;
+  getQuestionByType(
+    type: 'BASIC' | 'EXPERT' | 'BEHAVIORAL'
+  ): Promise<HydratedDocument<QuestionConfigDocument>>;
 }
+
+questionConfig.statics.getQuestionByType = async function (
+  type: 'BASIC' | 'EXPERT' | 'BEHAVIORAL'
+): Promise<HydratedDocument<QuestionConfigDocument>> {
+  const config = await this.findOne({ type });
+  if (!config) {
+    throw new NotFoundError(`Question config of type ${type} not found`);
+  }
+  return config;
+};
 
 questionConfig.statics.getQuestionConfig = async function (): Promise<
   HydratedDocument<QuestionConfigDocument>[]
