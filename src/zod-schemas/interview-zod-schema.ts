@@ -64,6 +64,14 @@ export const expertInterviewPayload = z.object({
     message: 'Job title must be at most 100 characters long',
   }),
 });
+
+export const interviewHistoryFilterOptions = z.object({
+  filterOptions: z.enum(['EXPERT', 'BEHAVIORAL', 'BASIC', 'HIGHEST', 'LOWEST']).optional(),
+});
+
+export type InterviewHistoryFilterOptions = z.infer<
+  typeof interviewHistoryFilterOptions
+>['filterOptions'];
 export type ExpertInterviewPayload = z.infer<typeof expertInterviewPayload>;
 export type GenerateGreetingResponsePayload = z.infer<typeof generateGreetingResponsePayload>;
 export type TextToSpeechPayload = z.infer<typeof textToSpeechPayload>;

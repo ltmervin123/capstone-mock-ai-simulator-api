@@ -1,5 +1,8 @@
 import QueueService from '../queue';
-import { type GenerateInterviewFeedbackPayload } from '../zod-schemas/interview-zod-schema';
+import {
+  InterviewHistoryFilterOptions,
+  type GenerateInterviewFeedbackPayload,
+} from '../zod-schemas/interview-zod-schema';
 import * as Prompt from '../utils/prompt';
 import * as Claude from '../third-parties/anthropic';
 import InterviewModel from '../models/interview-model';
@@ -17,8 +20,11 @@ export const makeInterviewFeedback = async (
   });
 };
 
-export const getInterviewHistory = async (studentId: string) => {
-  return await InterviewModel.getInterviewHistory(studentId);
+export const getInterviewHistory = async (
+  studentId: string,
+  filterOptions: InterviewHistoryFilterOptions
+) => {
+  return await InterviewModel.getInterviewHistory(studentId, filterOptions);
 };
 
 export const getInterviewDetail = async (interviewId: string, studentId: string) => {
