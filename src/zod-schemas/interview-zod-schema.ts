@@ -34,8 +34,7 @@ export const generateFollowUpQuestionPayload = z.object({
         CANDIDATE: z.string().min(1, { message: 'Candidate conversation text is required' }),
       })
     )
-    .min(1, { message: 'At least one conversation turn is required' })
-    .max(5, { message: 'A maximum of 5 conversation turns is allowed' }),
+    .min(1, { message: 'At least one conversation turn is required' }),
 });
 
 export const generateInterviewFeedbackPayload = z.object({
