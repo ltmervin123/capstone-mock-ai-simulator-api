@@ -155,6 +155,11 @@ export const feedback = (data: InterviewConversation) => {
 };
 
 export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
+  const questionsList = Array.from(
+    { length: data.numberOfQuestionToGenerate },
+    (_, i) => `"question ${i + 1}"`
+  ).join(', ');
+
   return `
   You will be given extracted data from a resume file and a list of previously generated questions. Your task is to determine if the extracted data represents a valid resume, and if valid, generate 5 unique interview questions based on the job title and resume content.
 
@@ -169,6 +174,7 @@ export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
   <previous_questions>
   ${JSON.stringify(data.previousQuestions)}
   </previous_questions>
+
 
   First, evaluate whether the resume data is valid. A resume is considered valid if it contains at least 3 of the following elements:
   - Personal information (name, contact details)
@@ -185,7 +191,7 @@ export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
     "isResumeValid": false
   }
 
-  If the resume is valid, generate 5 unique interview questions based on the specific content, experience, and skills mentioned in the resume. The questions should be:
+  If the resume is valid, generate ${data.numberOfQuestionToGenerate} unique interview questions based on the specific content, experience, and skills mentioned in the resume. The questions should be:
   - Relevant to the candidate's background
   - Different from any questions in the previous_questions list
   - Professional and appropriate for an interview setting
@@ -194,8 +200,8 @@ export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
 
   For valid resumes, output only this JSON structure:
   {
-    isResumeValid: true,
-    "questions": ["question 1", "question 2", "question 3", "question 4", "question 5"]
+    "isResumeValid": true,
+    "questions": [${questionsList}]
   }
 
   Important requirements:
@@ -204,5 +210,6 @@ export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
   - Do not use markdown formatting or code blocks
   - Ensure all questions are unique and not duplicates of the previous_questions
   - Make questions specific to the resume content rather than generic interview questions
+  - You MUST generate exactly ${data.numberOfQuestionToGenerate} questions, no more, no less
   `;
 };
