@@ -129,6 +129,22 @@ router.get(
   InterviewController.getUserDashboardStat
 );
 
+/**
+ * @route GET /api/v1/interview/question-config
+ * @description Get question configuration
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @returns { status, message, questionConfig }
+ */
+
+router.get(
+  '/question-config',
+  globalRateLimiter,
+  authCheckHandler,
+  roleStudentCheck,
+  InterviewController.getQuestionConfig
+);
+
 /** * @route PUT /api/v1/interview/mark-as-viewed/:interviewId
  * @description Mark an interview as viewed by the user
  * @access Private

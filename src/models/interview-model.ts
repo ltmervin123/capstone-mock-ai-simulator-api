@@ -15,6 +15,7 @@ import type {
   TopInterviewPerformers,
 } from '../types/interview-type';
 import { DAILY_LABELS, MONTHLY_LABELS, WEEKLY_LABELS } from '../utils/date-labels';
+import { InterviewHistoryFilterOptions } from '../zod-schemas/interview-zod-schema';
 
 interface InterviewModelInterface extends Model<InterviewDocumentType> {
   createInterview(interviewData: InterviewClientDocumentType): Promise<void>;
@@ -22,7 +23,10 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
     interviewId: string,
     studentId: string
   ): Promise<HydratedDocument<InterviewDocumentType>>;
-  getInterviewHistory(studentId: string): Promise<InterviewHistoryType[]>;
+  getInterviewHistory(
+    studentId: string,
+    filterOptions: InterviewHistoryFilterOptions
+  ): Promise<InterviewHistoryType[]>;
   getUserExpertInterviewRecentQuestionUsed(studentId: string): Promise<string[]>;
   getUserInterviewsCount(studentId: string): Promise<number>;
   getUserInterviewsAverageScore(studentId: string): Promise<number>;
@@ -229,8 +233,53 @@ interviewSchema.statics.getInterviewDetail = async function (
 };
 
 interviewSchema.statics.getInterviewHistory = async function (
-  studentId: string
+  studentId: string,
+  filterOptions: InterviewHistoryFilterOptions
 ): Promise<InterviewHistoryType[]> {
+  const FILTER_BY_INTERVIEW_TYPE = ['EXPERT', 'BEHAVIORAL', 'BASIC'];
+  const FILTER_BY_HIGHEST_LOWEST = ['HIGHEST', 'LOWEST'];
+
+  if (filterOptions && FILTER_BY_INTERVIEW_TYPE.includes(filterOptions)) {
+    const interviewTypeKey: Record<string, string> = {
+      EXPERT: 'Expert',
+      BEHAVIORAL: 'Behavioral',
+      BASIC: 'Basic',
+    };
+
+    return await this.find({ studentId, interviewType: interviewTypeKey[filterOptions] })
+      .select({
+        _id: 1,
+        interviewType: 1,
+        duration: 1,
+        numberOfQuestions: 1,
+        createdAt: 1,
+        totalScore: '$scores.totalScore',
+        isViewed: 1,
+      })
+      .sort({ createdAt: -1 })
+      .lean();
+  }
+
+  if (filterOptions && FILTER_BY_HIGHEST_LOWEST.includes(filterOptions)) {
+    const sortOptionKey: Record<string, number> = {
+      HIGHEST: -1,
+      LOWEST: 1,
+    };
+
+    return await this.find({ studentId })
+      .select({
+        _id: 1,
+        interviewType: 1,
+        duration: 1,
+        numberOfQuestions: 1,
+        createdAt: 1,
+        totalScore: '$scores.totalScore',
+        isViewed: 1,
+      })
+      .sort({ createdAt: -1, totalScore: sortOptionKey[filterOptions] })
+      .lean();
+  }
+
   return await this.find({ studentId })
     .select({
       _id: 1,

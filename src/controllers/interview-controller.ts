@@ -5,6 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
   ExpertInterviewPayload,
   GenerateInterviewFeedbackPayload,
+  InterviewHistoryFilterOptions,
   type GenerateFollowUpQuestionPayload,
   type TextToSpeechPayload as TextToSpeechPayloadType,
 } from '../zod-schemas/interview-zod-schema';
@@ -73,9 +74,9 @@ export const makeInterviewFeedback = async (req: Request, res: Response, next: N
 
 export const getInterviewHistory = async (req: Request, res: Response, next: NextFunction) => {
   const studentId = req.user?._id!;
-
+  const filterOptions = req.params.filterOptions as InterviewHistoryFilterOptions;
   try {
-    const interviewHistory = await InterviewService.getInterviewHistory(studentId);
+    const interviewHistory = await InterviewService.getInterviewHistory(studentId, filterOptions);
     res.json({
       success: true,
       message: 'Interview history retrieved successfully',
@@ -166,6 +167,19 @@ export const updateUserUnViewedInterviewCount = async (
     res.json({
       success: true,
       message: 'User un viewed interview count updated successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getQuestionConfig = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const questionConfig = await InterviewService.getQuestionConfig();
+    res.json({
+      success: true,
+      message: 'Question configuration retrieved successfully',
+      questionConfig,
     });
   } catch (error) {
     next(error);

@@ -1,8 +1,12 @@
 import QueueService from '../queue';
-import { type GenerateInterviewFeedbackPayload } from '../zod-schemas/interview-zod-schema';
+import {
+  InterviewHistoryFilterOptions,
+  type GenerateInterviewFeedbackPayload,
+} from '../zod-schemas/interview-zod-schema';
 import * as Prompt from '../utils/prompt';
 import * as Claude from '../third-parties/anthropic';
 import InterviewModel from '../models/interview-model';
+import QuestionConfigModel from '../models/question-config-model';
 import { parseFile } from '../utils/parse-file';
 import { BadRequestError } from '../utils/errors';
 
@@ -16,8 +20,11 @@ export const makeInterviewFeedback = async (
   });
 };
 
-export const getInterviewHistory = async (studentId: string) => {
-  return await InterviewModel.getInterviewHistory(studentId);
+export const getInterviewHistory = async (
+  studentId: string,
+  filterOptions: InterviewHistoryFilterOptions
+) => {
+  return await InterviewModel.getInterviewHistory(studentId, filterOptions);
 };
 
 export const getInterviewDetail = async (interviewId: string, studentId: string) => {
@@ -33,8 +40,15 @@ export const expertInterviewQuestions = async (
     parseFile(file),
     InterviewModel.getUserExpertInterviewRecentQuestionUsed(userId),
   ]);
+  const { numberOfQuestionToGenerate } = await QuestionConfigModel.getQuestionByType('EXPERT');
 
-  const prompt = Prompt.expertInterviewQuestions({ resumeData, previousQuestions, jobTitle });
+  const prompt = Prompt.expertInterviewQuestions({
+    resumeData,
+    previousQuestions,
+    jobTitle,
+    numberOfQuestionToGenerate,
+  });
+
   const model = Claude.MODEL_LIST.questionGeneration;
   const response = await Claude.chat(prompt, model);
   const { isResumeValid, questions }: { questions?: string[]; isResumeValid?: boolean } =
@@ -82,4 +96,8 @@ export const getUserUnViewedInterviewCount = async (studentId: string) => {
 
 export const updateUserUnViewedInterviewCount = async (studentId: string, interviewId: string) => {
   await InterviewModel.updateUserUnViewedInterviewCount(studentId, interviewId);
+};
+
+export const getQuestionConfig = async () => {
+  return await QuestionConfigModel.getQuestionConfig();
 };

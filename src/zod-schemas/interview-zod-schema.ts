@@ -34,8 +34,7 @@ export const generateFollowUpQuestionPayload = z.object({
         CANDIDATE: z.string().min(1, { message: 'Candidate conversation text is required' }),
       })
     )
-    .min(1, { message: 'At least one conversation turn is required' })
-    .max(5, { message: 'A maximum of 5 conversation turns is allowed' }),
+    .min(1, { message: 'At least one conversation turn is required' }),
 });
 
 export const generateInterviewFeedbackPayload = z.object({
@@ -65,6 +64,14 @@ export const expertInterviewPayload = z.object({
     message: 'Job title must be at most 100 characters long',
   }),
 });
+
+export const interviewHistoryFilterOptions = z.object({
+  filterOptions: z.enum(['EXPERT', 'BEHAVIORAL', 'BASIC', 'HIGHEST', 'LOWEST']).optional(),
+});
+
+export type InterviewHistoryFilterOptions = z.infer<
+  typeof interviewHistoryFilterOptions
+>['filterOptions'];
 export type ExpertInterviewPayload = z.infer<typeof expertInterviewPayload>;
 export type GenerateGreetingResponsePayload = z.infer<typeof generateGreetingResponsePayload>;
 export type TextToSpeechPayload = z.infer<typeof textToSpeechPayload>;

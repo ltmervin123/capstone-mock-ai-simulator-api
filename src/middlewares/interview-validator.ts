@@ -6,6 +6,7 @@ import {
   generateInterviewFeedbackPayload as generateInterviewFeedbackPayloadSchema,
   interviewIdSchema,
   expertInterviewPayload as expertInterviewPayloadSchema,
+  interviewHistoryFilterOptions,
 } from '../zod-schemas/interview-zod-schema';
 import { BadRequestError } from '../utils/errors';
 
@@ -75,6 +76,16 @@ export const validateUploadResume = (req: Request, res: Response, next: NextFunc
       throw new BadRequestError('Resume file is required');
     }
     req.body = result;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const validateGetInterviewHistory = (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const result = interviewHistoryFilterOptions.parse(req.params);
+    req.params = result;
     next();
   } catch (error) {
     next(error);

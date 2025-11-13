@@ -131,3 +131,10 @@ export type InterviewPreview = {
   studentFullName: string;
   totalScore: number;
 };
+
+export type InterviewHistoryFilterOptions =
+  | 'EXPERT'
+  | 'BEHAVIORAL'
+  | 'BASIC'
+  | 'HIGHEST'
+  | 'LOWEST';
