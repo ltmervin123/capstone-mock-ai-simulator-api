@@ -261,23 +261,25 @@ interviewSchema.statics.getInterviewHistory = async function (
   }
 
   if (filterOptions && FILTER_BY_HIGHEST_LOWEST.includes(filterOptions)) {
-    const sortOptionKey: Record<string, number> = {
+    const sortOptionKey: Record<string, 1 | -1> = {
       HIGHEST: -1,
       LOWEST: 1,
     };
-
-    return await this.find({ studentId })
-      .select({
-        _id: 1,
-        interviewType: 1,
-        duration: 1,
-        numberOfQuestions: 1,
-        createdAt: 1,
-        totalScore: '$scores.totalScore',
-        isViewed: 1,
-      })
-      .sort({ createdAt: -1, totalScore: sortOptionKey[filterOptions] })
-      .lean();
+    return await this.aggregate([
+      { $match: { studentId: new mongoose.Types.ObjectId(studentId) } },
+      {
+        $project: {
+          _id: 1,
+          interviewType: 1,
+          duration: 1,
+          numberOfQuestions: 1,
+          createdAt: 1,
+          totalScore: '$scores.totalScore',
+          isViewed: 1,
+        },
+      },
+      { $sort: { totalScore: sortOptionKey[filterOptions], createdAt: -1 } },
+    ]);
   }
 
   return await this.find({ studentId })

@@ -91,6 +91,7 @@ router.get(
   globalRateLimiter,
   authCheckHandler,
   roleStudentCheck,
+  InterviewValidator.validateGetInterviewHistory,
   InterviewController.getInterviewHistory
 );
 

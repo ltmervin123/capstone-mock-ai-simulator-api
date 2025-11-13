@@ -84,8 +84,8 @@ export const validateUploadResume = (req: Request, res: Response, next: NextFunc
 
 export const validateGetInterviewHistory = (req: Request, res: Response, next: NextFunction) => {
   try {
-    const result = interviewHistoryFilterOptions.parse(req.params);
-    req.params = result;
+    const result = interviewHistoryFilterOptions.parse(req.query);
+    res.locals.filters = result;
     next();
   } catch (error) {
     next(error);

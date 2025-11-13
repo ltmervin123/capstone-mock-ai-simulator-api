@@ -74,7 +74,8 @@ export const makeInterviewFeedback = async (req: Request, res: Response, next: N
 
 export const getInterviewHistory = async (req: Request, res: Response, next: NextFunction) => {
   const studentId = req.user?._id!;
-  const filterOptions = req.params.filterOptions as InterviewHistoryFilterOptions;
+  const filterOptions = res.locals.filters.filterOptions as InterviewHistoryFilterOptions;
+
   try {
     const interviewHistory = await InterviewService.getInterviewHistory(studentId, filterOptions);
     res.json({
