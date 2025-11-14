@@ -17,6 +17,7 @@ interface EmailService {
   PASSWORD: string | undefined;
   PORT?: string | undefined;
   HOST?: string | undefined;
+  BREVO_API_KEY?: string | undefined;
 }
 
 interface RedisConfig {
@@ -60,6 +61,7 @@ export const CONFIG: Constants = {
     PASSWORD: process.env.EMAIL_PASSWORD,
     HOST: process.env.EMAIL_HOST,
     PORT: process.env.EMAIL_PORT,
+    BREVO_API_KEY: process.env.BREVO_API_KEY,
   },
   REDIS: {
     HOST: process.env.REDIS_HOST,
