@@ -2,8 +2,43 @@ import { Router } from 'express';
 import { authRateLimiter, globalRateLimiter } from '../configs/rate-limit-config';
 import * as AuthController from '../controllers/auth-controller';
 import * as AuthValidator from '../middlewares/auth-validator';
-import { authCheckHandler } from '../middlewares/auth-check-handler';
+import { authCheckHandler, roleAdminCheck } from '../middlewares/auth-check-handler';
+import { updateAdminEmail } from '../controllers/admin-controller';
+import { updatePassword } from '../controllers/auth-controller';
 const router = Router();
+
+/**
+ * @route POST /api/v1/auth/update-admin-email
+ * @description Update admin account email
+ * @access Private
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.post(
+  '/update-admin-email',
+  globalRateLimiter,
+  authCheckHandler,
+  roleAdminCheck,
+  updateAdminEmail
+);
+
+/**
+ * @route POST /api/v1/auth/account-password
+ * @description Update admin account email
+ * @access Private
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.post(
+  '/update-account-password',
+  globalRateLimiter,
+  authCheckHandler,
+  updatePassword
+);
 
 /**
  * @route POST /api/v1/auth/signup

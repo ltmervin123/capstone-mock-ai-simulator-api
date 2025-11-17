@@ -45,7 +45,7 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
     );
 
     const authToken = generateToken(
-      { _id, firstName, lastName, middleName, program, role },
+      { _id, firstName, lastName, middleName, program, role, email },
       { expiresIn: '1d' }
     );
 
@@ -93,4 +93,21 @@ export const me = async (req: Request, res: Response) => {
     message: 'User authenticated successfully.',
     user: req.user!,
   });
+};
+
+export const updatePassword = async (req: Request, res: Response, next: NextFunction) => {
+  const id = req.user?._id!;
+  const { newPassword, confirmationPassword } = req.body as {
+    newPassword: string;
+    confirmationPassword: string;
+  };
+  try {
+    await StudentService.updatePassword(id, newPassword, confirmationPassword);
+    res.status(201).json({
+      message: 'Account password updated successfuly',
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
 };

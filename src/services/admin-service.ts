@@ -128,3 +128,7 @@ export const getInterviews = async (filterOptions: FilterOptions) => {
 export const getAdminInterviewReports = async (interviewId: string) => {
   return await InterviewModel.getAdminInterviewReports(interviewId);
 };
+
+export const updateAdminEmail = async (id: string, email: string) => {
+  await StudentModel.updateAdminEmail(id, email);
+};

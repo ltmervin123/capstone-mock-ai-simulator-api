@@ -5,4 +5,5 @@ export type AuthenticatedUserType = {
   middleName: string;
   program: string;
   role: string;
+  email: string;
 };

@@ -2,7 +2,7 @@ import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import studentSchema from '../db-schemas/student-schema';
 import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
-import { ConflictError, UnauthorizedError } from '../utils/errors';
+import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/errors';
 import { generateHash, compareHash } from '../utils/bcrypt';
 import { PROGRAM_ACRONYMS } from '../utils/student-program-option';
 import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
@@ -27,7 +27,34 @@ interface StudentModelInterface extends Model<StudentDocumentType> {
   ): Promise<HydratedDocument<StudentDocumentType>[]>;
   acceptStudent(id: string): Promise<StudentDocumentType>;
   rejectStudent(id: string): Promise<StudentDocumentType>;
+  updateAdminEmail(id: string, email: string): Promise<void>;
+  updatePassword(id: string, newPassword: string): Promise<void>;
 }
+
+studentSchema.statics.updatePassword = async function (
+  id: string,
+  newPassword: string
+): Promise<void> {
+  const hashedPassword = generateHash(newPassword);
+
+  const updatedAccount = await this.findByIdAndUpdate(id, {
+    password: hashedPassword,
+  });
+
+  if (!updatedAccount) {
+    throw new NotFoundError('Account not found');
+  }
+};
+
+studentSchema.statics.updateAdminEmail = async function (id: string, email: string): Promise<void> {
+  const updatedEmail = await this.findByIdAndUpdate(id, {
+    email,
+  });
+
+  if (!updatedEmail) {
+    throw new NotFoundError('Account not found');
+  }
+};
 
 studentSchema.statics.rejectStudent = async function (id: string): Promise<StudentDocumentType> {
   const rejectedStudent = await this.findByIdAndDelete(id);

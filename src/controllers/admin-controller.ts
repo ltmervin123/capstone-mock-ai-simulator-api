@@ -225,3 +225,19 @@ export const getAdminInterviewReports = async (req: Request, res: Response, next
     next(err);
   }
 };
+
+export const updateAdminEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const id = req.user?._id!;
+    const { email } = req.body as { email: string };
+
+    await AdminService.updateAdminEmail(id, email);
+
+    res.status(200).json({
+      message: 'Admin email updated successfully',
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+};

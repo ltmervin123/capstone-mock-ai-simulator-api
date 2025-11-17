@@ -6,6 +6,7 @@ import { generateToken } from '../utils/jwt';
 import { verificationURL } from '../utils/url';
 import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
+import { BadRequestError } from '../utils/errors';
 
 export const signup = async (studentData: StudentType): Promise<void> => {
   const { _id, email } = await StudentModel.signup(studentData);
@@ -36,4 +37,16 @@ export const signin = async (
 
 export const signout = async (id: string): Promise<void> => {
   await StudentModel.signout(id);
+};
+
+export const updatePassword = async (
+  id: string,
+  newPassword: string,
+  cofirmationPassword: string
+) => {
+  if (newPassword !== cofirmationPassword) {
+    throw new BadRequestError('Confirmation password not match');
+  }
+
+  await StudentModel.updatePassword(id, newPassword);
 };
