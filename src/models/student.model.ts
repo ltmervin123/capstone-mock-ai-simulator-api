@@ -48,7 +48,7 @@ studentSchema.statics.updatePassword = async function (
   id: string,
   newPassword: string
 ): Promise<void> {
-  const hashedPassword = generateHash(newPassword);
+  const hashedPassword = await generateHash(newPassword);
 
   const updatedAccount = await this.findByIdAndUpdate(id, {
     password: hashedPassword,

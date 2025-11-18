@@ -19,10 +19,16 @@ export const sendResetPasswordLink = async (email: string) => {
   };
 
   const purpose = 'RESET_PASSWORD';
- 
+
   const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
   await TokenModel.createToken(token, purpose, expiresAt);
 
   await QueueService.getInstance('email-service').addJob('send-email', emailData);
+};
+
+export const verifyResetPasswordToken = async (token: string) => {
+  const decodedToken = JWT.verifyToken(token) as { _id: string; email: string; firstName: string };
+  await TokenModel.findToken(token, 'RESET_PASSWORD');
+  return decodedToken;
 };

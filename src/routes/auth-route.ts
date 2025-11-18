@@ -25,7 +25,7 @@ router.post(
 );
 
 /**
- * @route POST /api/v1/auth/account-password
+ * @route PUT /api/v1/auth/account-password
  * @description Update admin account email
  * @access Private
  * @rateLimit globalRateLimter
@@ -33,12 +33,18 @@ router.post(
  * @returns {status, message}
  */
 
-router.post(
-  '/update-account-password',
-  globalRateLimiter,
-  authCheckHandler,
-  updatePassword
-);
+router.put('/update-account-password', globalRateLimiter, updatePassword);
+
+/**
+ * @route POST /api/v1/auth/send-reset-password-link
+ * @description Send reset password link to student's email
+ * @access Public
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.post('/send-reset-password-link', globalRateLimiter, AuthController.sendResetPasswordLink);
 
 /**
  * @route POST /api/v1/auth/signup
@@ -92,6 +98,21 @@ router.post(
   authRateLimiter,
   AuthValidator.validateVerifyStudentEmail,
   AuthController.verifyEmail
+);
+
+/**
+ * @route GET /api/v1/auth/verify-reset-password-token/:token
+ * @description Verify reset password token
+ * @access Public
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.get(
+  '/verify-reset-password-token/:token',
+  globalRateLimiter,
+  AuthController.verifyResetPasswordToken
 );
 
 export default router;

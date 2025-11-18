@@ -1,5 +1,6 @@
 import { HydratedDocument, Types } from 'mongoose';
 import StudentModel from '../models/student.model';
+import TokenModel from '../models/token-model';
 import QueueService from '../queue';
 import { generateVerificationEmailTemplate } from '../utils/email-template';
 import { generateToken } from '../utils/jwt';
@@ -42,11 +43,14 @@ export const signout = async (id: string): Promise<void> => {
 export const updatePassword = async (
   id: string,
   newPassword: string,
-  cofirmationPassword: string
+  confirmationPassword: string,
+  token: string
 ) => {
-  if (newPassword !== cofirmationPassword) {
+  if (newPassword !== confirmationPassword) {
     throw new BadRequestError('Confirmation password not match');
   }
 
   await StudentModel.updatePassword(id, newPassword);
+
+  await TokenModel.deleteToken(token, 'RESET_PASSWORD');
 };
