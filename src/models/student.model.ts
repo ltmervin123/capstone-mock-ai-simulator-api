@@ -29,7 +29,20 @@ interface StudentModelInterface extends Model<StudentDocumentType> {
   rejectStudent(id: string): Promise<StudentDocumentType>;
   updateAdminEmail(id: string, email: string): Promise<void>;
   updatePassword(id: string, newPassword: string): Promise<void>;
+  findByEmail(email: string): Promise<HydratedDocument<StudentDocumentType>>;
 }
+
+studentSchema.statics.findByEmail = async function (
+  email: string
+): Promise<HydratedDocument<StudentDocumentType>> {
+  const student = await this.findOne({ email }).select('email _id firstName').lean();
+
+  if (!student) {
+    throw new NotFoundError('No account associated with the provided email.');
+  }
+
+  return student;
+};
 
 studentSchema.statics.updatePassword = async function (
   id: string,
