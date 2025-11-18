@@ -12,6 +12,7 @@ import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
 import { FilterOptions } from '../types/interview-type';
 import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
+import { BadRequestError } from '../utils/errors';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -129,6 +130,9 @@ export const getAdminInterviewReports = async (interviewId: string) => {
   return await InterviewModel.getAdminInterviewReports(interviewId);
 };
 
-export const updateAdminEmail = async (id: string, email: string) => {
-  await StudentModel.updateAdminEmail(id, email);
+export const updateAdminEmail = async (id: string, newEmail: string, confirmationEmail: string) => {
+  if (newEmail !== confirmationEmail) {
+    throw new BadRequestError('New email and confirmation email is not match');
+  }
+  await StudentModel.updateAdminEmail(id, newEmail);
 };

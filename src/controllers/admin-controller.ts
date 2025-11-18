@@ -229,9 +229,12 @@ export const getAdminInterviewReports = async (req: Request, res: Response, next
 export const updateAdminEmail = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id = req.user?._id!;
-    const { email } = req.body as { email: string };
+    const { newEmail, confirmationEmail } = req.body as {
+      newEmail: string;
+      confirmationEmail: string;
+    };
 
-    await AdminService.updateAdminEmail(id, email);
+    await AdminService.updateAdminEmail(id, newEmail, confirmationEmail);
 
     res.status(200).json({
       message: 'Admin email updated successfully',

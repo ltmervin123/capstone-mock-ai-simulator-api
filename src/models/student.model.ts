@@ -2,7 +2,7 @@ import mongoose, { HydratedDocument, Model, Types } from 'mongoose';
 import studentSchema from '../db-schemas/student-schema';
 import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
-import { ConflictError, NotFoundError, UnauthorizedError } from '../utils/errors';
+import { BadRequestError, ConflictError, NotFoundError, UnauthorizedError } from '../utils/errors';
 import { generateHash, compareHash } from '../utils/bcrypt';
 import { PROGRAM_ACRONYMS } from '../utils/student-program-option';
 import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
@@ -47,6 +47,12 @@ studentSchema.statics.updatePassword = async function (
 };
 
 studentSchema.statics.updateAdminEmail = async function (id: string, email: string): Promise<void> {
+  const existingEmail = await this.findOne({ email }).select('email').lean();
+
+  if (existingEmail) {
+    throw new BadRequestError('Email already in use');
+  }
+
   const updatedEmail = await this.findByIdAndUpdate(id, {
     email,
   });
