@@ -143,7 +143,7 @@ studentSchema.statics.getPendingStudents = async function (
       role: 'STUDENT',
       $or: [{ firstName: nameRegex }, { lastName: nameRegex }, { middleName: nameRegex }],
     }).select(
-      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
+      '_id firstName lastName middleName email studentId program updatedAt isAuthenticated'
     );
   }
 
@@ -155,7 +155,7 @@ studentSchema.statics.getPendingStudents = async function (
       role: 'STUDENT',
       studentId: studentIdRegex,
     }).select(
-      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
+      '_id firstName lastName middleName email studentId program updatedAt isAuthenticated'
     );
   }
 
@@ -163,7 +163,7 @@ studentSchema.statics.getPendingStudents = async function (
     isStudentVerified: false,
     isEmailVerified: true,
     role: 'STUDENT',
-  }).select('_id firstName lastName middleName email studentId program acceptedAt isAuthenticated');
+  }).select('_id firstName lastName middleName email studentId program updatedAt isAuthenticated');
 };
 
 studentSchema.statics.getCountsOfAuthenticatedStudents = async function (): Promise<number> {
