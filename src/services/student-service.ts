@@ -1,11 +1,13 @@
 import { HydratedDocument, Types } from 'mongoose';
 import StudentModel from '../models/student.model';
+import TokenModel from '../models/token-model';
 import QueueService from '../queue';
 import { generateVerificationEmailTemplate } from '../utils/email-template';
 import { generateToken } from '../utils/jwt';
 import { verificationURL } from '../utils/url';
 import { type Student as StudentType } from '../zod-schemas/student-zod-schema';
 import type { StudentDocument as StudentDocumentType } from '../types/student-type';
+import { BadRequestError } from '../utils/errors';
 
 export const signup = async (studentData: StudentType): Promise<void> => {
   const { _id, email } = await StudentModel.signup(studentData);
@@ -36,4 +38,19 @@ export const signin = async (
 
 export const signout = async (id: string): Promise<void> => {
   await StudentModel.signout(id);
+};
+
+export const updatePassword = async (
+  id: string,
+  newPassword: string,
+  confirmationPassword: string,
+  token: string
+) => {
+  if (newPassword !== confirmationPassword) {
+    throw new BadRequestError('Confirmation password not match');
+  }
+
+  await StudentModel.updatePassword(id, newPassword);
+
+  await TokenModel.deleteToken(token, 'RESET_PASSWORD');
 };

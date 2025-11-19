@@ -92,3 +92,35 @@ export function generateAccountRejectedEmailTemplate(firstName: string, link: st
           </html>
 `;
 }
+
+export function generateResetPasswordEmailTemplate(firstName: string, link: string): string {
+  return `<!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="UTF-8" />
+            <title>Reset Your Password</title>
+          </head>
+          <body style="font-family: Arial, sans-serif; background-color:#f5f7fa; margin:0; padding:0;">
+            <table align="center" cellpadding="0" cellspacing="0" width="100%" style="max-width:600px; margin:auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.1);">
+              <tr>
+                <td style="padding:20px; text-align:center; background:#15803d; color:#ffffff;">
+                  <h2 style="margin:0;">Reset Your Password</h2>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:30px; color:#333333;">
+                  <p>Hi <strong>${firstName}</strong>,</p>
+                  <p>We received a request to reset your <strong>PrepWise</strong> password. Click the button below to create a new password:</p>
+                  <p style="text-align:center; margin:30px 0;">
+                    <a href="${link}" style="background:#15803d; color:#ffffff; padding:12px 24px; text-decoration:none; border-radius:6px; font-weight:bold;">Reset Password</a>
+                  </p>
+                  <p style="color:#666666; font-size:14px;">This link will expire in 24 hours.</p>
+                  <p style="margin-top:20px; color:#666666; font-size:14px;"><strong>Didn't request this?</strong> You can safely ignore this email. Your password will remain unchanged.</p>
+                  <p style="margin-top:30px;">Best regards,<br>The <strong>PrepWise</strong> Team</p>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+`;
+}

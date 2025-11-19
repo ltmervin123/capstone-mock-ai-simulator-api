@@ -2,8 +2,49 @@ import { Router } from 'express';
 import { authRateLimiter, globalRateLimiter } from '../configs/rate-limit-config';
 import * as AuthController from '../controllers/auth-controller';
 import * as AuthValidator from '../middlewares/auth-validator';
-import { authCheckHandler } from '../middlewares/auth-check-handler';
+import { authCheckHandler, roleAdminCheck } from '../middlewares/auth-check-handler';
+import { updateAdminEmail } from '../controllers/admin-controller';
+import { updatePassword } from '../controllers/auth-controller';
 const router = Router();
+
+/**
+ * @route POST /api/v1/auth/update-admin-email
+ * @description Update admin account email
+ * @access Private
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.post(
+  '/update-admin-email',
+  globalRateLimiter,
+  authCheckHandler,
+  roleAdminCheck,
+  updateAdminEmail
+);
+
+/**
+ * @route PUT /api/v1/auth/account-password
+ * @description Update admin account email
+ * @access Private
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.put('/update-account-password', globalRateLimiter, updatePassword);
+
+/**
+ * @route POST /api/v1/auth/send-reset-password-link
+ * @description Send reset password link to student's email
+ * @access Public
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.post('/send-reset-password-link', globalRateLimiter, AuthController.sendResetPasswordLink);
 
 /**
  * @route POST /api/v1/auth/signup
@@ -57,6 +98,21 @@ router.post(
   authRateLimiter,
   AuthValidator.validateVerifyStudentEmail,
   AuthController.verifyEmail
+);
+
+/**
+ * @route GET /api/v1/auth/verify-reset-password-token/:token
+ * @description Verify reset password token
+ * @access Public
+ * @rateLimit globalRateLimter
+ * @body {email}
+ * @returns {status, message}
+ */
+
+router.get(
+  '/verify-reset-password-token/:token',
+  globalRateLimiter,
+  AuthController.verifyResetPasswordToken
 );
 
 export default router;
