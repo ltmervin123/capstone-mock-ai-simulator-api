@@ -8,6 +8,7 @@ const studentSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true },
     studentId: { type: String, required: true },
     program: { type: String, required: true },
+    nameExtension: { type: String, default: null },
     password: { type: String, required: true },
     isStudentVerified: { type: Boolean, default: false },
     isEmailVerified: { type: Boolean, default: false },

@@ -108,9 +108,11 @@ studentSchema.statics.getAcceptedStudents = async function (
       isEmailVerified: true,
       role: 'STUDENT',
       $or: [{ firstName: nameRegex }, { lastName: nameRegex }, { middleName: nameRegex }],
-    }).select(
-      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
-    );
+    })
+      .select(
+        '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated nameExtension'
+      )
+      .sort({ createdAt: -1 });
   }
 
   if (filterOptions?.studentId) {
@@ -120,16 +122,22 @@ studentSchema.statics.getAcceptedStudents = async function (
       isEmailVerified: true,
       role: 'STUDENT',
       studentId: studentIdRegex,
-    }).select(
-      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated'
-    );
+    })
+      .select(
+        '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated nameExtension'
+      )
+      .sort({ createdAt: -1 });
   }
 
   return await this.find({
     isStudentVerified: true,
     isEmailVerified: true,
     role: 'STUDENT',
-  }).select('_id firstName lastName middleName email studentId program acceptedAt isAuthenticated');
+  })
+    .select(
+      '_id firstName lastName middleName email studentId program acceptedAt isAuthenticated nameExtension'
+    )
+    .sort({ createdAt: -1 });
 };
 
 studentSchema.statics.getPendingStudents = async function (
@@ -142,9 +150,11 @@ studentSchema.statics.getPendingStudents = async function (
       isEmailVerified: true,
       role: 'STUDENT',
       $or: [{ firstName: nameRegex }, { lastName: nameRegex }, { middleName: nameRegex }],
-    }).select(
-      '_id firstName lastName middleName email studentId program updatedAt isAuthenticated'
-    );
+    })
+      .select(
+        '_id firstName lastName middleName email studentId program updatedAt isAuthenticated nameExtension'
+      )
+      .sort({ updatedAt: -1 });
   }
 
   if (filterOptions?.studentId) {
@@ -154,16 +164,22 @@ studentSchema.statics.getPendingStudents = async function (
       isEmailVerified: true,
       role: 'STUDENT',
       studentId: studentIdRegex,
-    }).select(
-      '_id firstName lastName middleName email studentId program updatedAt isAuthenticated'
-    );
+    })
+      .select(
+        '_id firstName lastName middleName email studentId program updatedAt isAuthenticated nameExtension'
+      )
+      .sort({ updatedAt: -1 });
   }
 
   return await this.find({
     isStudentVerified: false,
     isEmailVerified: true,
     role: 'STUDENT',
-  }).select('_id firstName lastName middleName email studentId program updatedAt isAuthenticated');
+  })
+    .select(
+      '_id firstName lastName middleName email studentId program updatedAt isAuthenticated nameExtension'
+    )
+    .sort({ updatedAt: -1 });
 };
 
 studentSchema.statics.getCountsOfAuthenticatedStudents = async function (): Promise<number> {
@@ -309,7 +325,7 @@ studentSchema.statics.signin = async function (
   const student: HydratedDocument<StudentDocumentType> | null = await this.findOne({
     email,
   }).select(
-    '_id firstName lastName middleName email studentId program password isStudentVerified isEmailVerified role isAuthenticated'
+    '_id firstName lastName middleName email studentId program password isStudentVerified isEmailVerified role isAuthenticated nameExtension'
   );
 
   if (!student) {

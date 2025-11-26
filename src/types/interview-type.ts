@@ -41,6 +41,7 @@ export type TopInterviewPerformers = {
     firstName: string;
     lastName: string;
     middleName: string;
+    nameExtension: string | null;
   };
   averageScore: number;
   program: Programs;
