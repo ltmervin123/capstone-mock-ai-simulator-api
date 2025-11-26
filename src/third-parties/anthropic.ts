@@ -16,6 +16,7 @@ export const MODEL_LIST = {
   feedbackGeneration: 'claude-3-7-sonnet-20250219' as MODELS,
   questionGeneration: 'claude-3-5-haiku-20241022' as MODELS,
   greetingResponse: 'claude-3-haiku-20240307' as MODELS,
+  sanitization: 'claude-3-haiku-20240307' as MODELS,
 };
 
 const DEFAULT_MODEL = 'claude-3-5-haiku-20241022';

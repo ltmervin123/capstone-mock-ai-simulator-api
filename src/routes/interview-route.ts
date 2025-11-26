@@ -61,6 +61,23 @@ router.post(
 );
 
 /**
+ * @route POST /api/v1/interview/sanitize-transcription
+ * @description Sanitize the transcription text
+ * @access Private
+ * @rateLimit authRateLimiter
+ * @body { transcription }
+ * @returns { status, sanitizedText, message }
+ */
+
+router.post(
+  '/sanitized-transcription',
+  globalRateLimiter,
+  authCheckHandler,
+  roleStudentCheck,
+  InterviewController.sanitizedTranscription
+);
+
+/**
  * @route POST /api/v1/interview/make-interview-feedback
  * @description Generate interview feedback for the user
  * @access Private
