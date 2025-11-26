@@ -30,6 +30,11 @@ export const student = z.object({
       message: 'Invalid program',
     }
   ),
+  nameExtension: z
+    .string()
+    .max(10, { message: 'Name extension must be at most 10 characters long' })
+    .optional()
+    .or(z.literal('')),
   email: z
     .string()
     .email({ message: 'Invalid email address' })

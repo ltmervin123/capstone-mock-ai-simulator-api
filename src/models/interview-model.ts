@@ -71,6 +71,7 @@ interviewSchema.statics.getTopInterviewPerformers = async function (): Promise<
           firstName: '$student.firstName',
           lastName: '$student.lastName',
           middleName: '$student.middleName',
+          nameExtension: '$student.nameExtension',
         },
         program: '$student.program',
       },

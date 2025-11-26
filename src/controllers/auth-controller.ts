@@ -39,13 +39,11 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
   try {
     const { email, password } = req.body as SigninPayloadType;
 
-    const { _id, firstName, lastName, middleName, program, role } = await StudentService.signin(
-      email,
-      password
-    );
+    const { _id, firstName, lastName, middleName, program, role, nameExtension } =
+      await StudentService.signin(email, password);
 
     const authToken = generateToken(
-      { _id, firstName, lastName, middleName, program, role, email },
+      { _id, firstName, lastName, middleName, program, role, email, nameExtension },
       { expiresIn: '1d' }
     );
 
@@ -59,7 +57,7 @@ export const signin = async (req: Request, res: Response, next: NextFunction) =>
     res.status(201).json({
       message: 'Sign in successfully.',
       success: true,
-      user: { _id, firstName, lastName, middleName, program, email, role },
+      user: { _id, firstName, lastName, middleName, program, email, role, nameExtension },
     });
   } catch (err) {
     next(err);
