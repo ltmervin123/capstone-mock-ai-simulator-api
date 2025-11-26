@@ -101,3 +101,11 @@ export const updateUserUnViewedInterviewCount = async (studentId: string, interv
 export const getQuestionConfig = async () => {
   return await QuestionConfigModel.getQuestionConfig();
 };
+
+export const sanitizedTranscription = async (transcription: string) => {
+  const prompt = Prompt.sanitizeTranscription(transcription);
+  const model = Claude.MODEL_LIST.sanitization;
+  const response = await Claude.chat(prompt, model);
+  const parsedResponse = JSON.parse(response) as { sanitizedTranscription: string };
+  return parsedResponse.sanitizedTranscription;
+};

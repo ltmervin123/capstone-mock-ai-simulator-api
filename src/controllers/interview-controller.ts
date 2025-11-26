@@ -186,3 +186,18 @@ export const getQuestionConfig = async (req: Request, res: Response, next: NextF
     next(error);
   }
 };
+
+export const sanitizedTranscription = async (req: Request, res: Response, next: NextFunction) => {
+  const { transcription } = req.body as { transcription: string };
+
+  try {
+    const sanitizedText = await InterviewService.sanitizedTranscription(transcription);
+    res.json({
+      success: true,
+      message: 'Transcription sanitized successfully',
+      sanitizedText,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

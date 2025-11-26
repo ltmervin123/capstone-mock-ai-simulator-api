@@ -213,3 +213,31 @@ export const expertInterviewQuestions = (data: ExpertInterviewArgs) => {
   - You MUST generate exactly ${data.numberOfQuestionToGenerate} questions, no more, no less
   `;
 };
+
+export const sanitizeTranscription = (transcription: string) => {
+  return `Format, clean up the following speech-to-text transcription to improve its accuracy and readability.
+
+  <transcription>
+  ${transcription}
+  </transcription>
+
+  Output only this JSON structure:
+
+  {
+    "sanitizedTranscription": "Your corrected and formatted transcription text here."
+  }
+
+  Important requirements:
+  - Your response must be ONLY a valid JSON object
+  - Do not include any explanatory text, comments, or additional content
+  - Do not use markdown formatting or code blocks
+  - Keep filler words (um, uh, like, you know, etc.) as they are part of the spoken response
+  - Fix incorrect word boundaries and merged/split words
+  - Fix capitalization issues (e.g., random capitals mid-sentence)
+  - Fix punctuation placement and spacing
+  - Remove unnecessary line breaks and extra spaces
+  - Form proper sentences with correct punctuation
+  - Make the text flow as a single coherent paragraph or appropriate paragraphs
+  - Preserve the speaker's intended meaning and natural speech patterns
+  `;
+};
