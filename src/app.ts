@@ -2,8 +2,13 @@ import './workers/email-worker';
 import './workers/claude-worker';
 import 'dotenv/config';
 import express, { NextFunction, type Application, Response, Request } from 'express';
+import mongoSanitize from 'express-mongo-sanitize';
+//@ts-expect-error - this is implemented in a plain JavaScript file
+import xss from 'xss-clean';
+import hpp from 'hpp';
 import http from 'http';
 import cors from 'cors';
+import helmet from 'helmet';
 import logger from './utils/logger';
 import mongoDB from './configs/mongodb-config';
 import { errorHandler } from './middlewares/error-handler';
@@ -17,6 +22,8 @@ import authRoutes from './routes/auth-route';
 import interviewRoutes from './routes/interview-route';
 import behavioralQuestionRoutes from './routes/behavioral-question-route';
 import adminRoutes from './routes/admin-route';
+import { HELMET_OPTIONS } from './configs/helmet-option-config';
+import { sanitizeRequest } from './middlewares/sanitize-request';
 
 const BASE_API = '/api/v1';
 const { PORT, API_URL, CLIENT_URL } = CONFIG;
@@ -28,10 +35,19 @@ const app: Application = express();
 const server = http.createServer(app);
 
 // Security middlewares
-app.use(cors(CORS_OPTIONS));
+// app.use(cors(CORS_OPTIONS));
+// app.use(express.json());
+// app.use(cookieParser());
+// app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(xss());
+app.use(hpp());
+app.use(helmet(HELMET_OPTIONS));
+app.use(cors(CORS_OPTIONS));
+app.use(sanitizeRequest);
 
 // Routes
 app.use(`${BASE_API}/auth`, authRoutes);
