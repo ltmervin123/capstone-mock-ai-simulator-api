@@ -3,20 +3,25 @@ import { z } from 'zod';
 export const student = z.object({
   firstName: z
     .string()
+    .trim()
     .min(1, { message: 'First name is required' })
     .max(100, { message: 'First name must be at most 100 characters long' }),
   middleName: z
     .string()
+    .trim()
     .min(1, { message: 'Middle name is required' })
     .max(100, { message: 'Middle name must be at most 100 characters long' }),
   lastName: z
     .string()
+    .trim()
     .min(1, { message: 'Last name is required' })
     .max(100, { message: 'Last name must be at most 100 characters long' }),
   studentId: z
     .string()
-    .min(12, { message: 'Student ID must be exactly 12 digits long' })
-    .max(12, { message: 'Student ID must be exactly 12 digits long' }),
+    .trim()
+    .min(4, { message: 'Student ID must be at least 4 characters long' })
+    .max(20, { message: 'Student ID must not exceed 20 characters' })
+    .regex(/^\d+$/, { message: 'Student ID must contain only numbers' }),
   program: z.enum(
     [
       'Bachelor of Science in Business Administration',
@@ -32,11 +37,13 @@ export const student = z.object({
   ),
   nameExtension: z
     .string()
-    .max(10, { message: 'Name extension must be at most 10 characters long' })
+    .trim()
+    .max(20, { message: 'Name extension must be at most 20 characters long' })
     .optional()
-    .or(z.literal('')),
+    .transform((val) => (val === '' ? undefined : val)),
   email: z
     .string()
+    .trim()
     .email({ message: 'Invalid email address' })
 
     .refine(
