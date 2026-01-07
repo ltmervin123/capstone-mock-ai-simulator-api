@@ -36,7 +36,7 @@ export type InterviewAdminReportDocument = Pick<
   };
 };
 
-export type TopInterviewPerformers = {
+export type TopStudent = {
   student: {
     firstName: string;
     lastName: string;

@@ -69,3 +69,9 @@ export const CONFIG: Constants = {
     PASSWORD: process.env.REDIS_PASSWORD,
   },
 };
+
+export const INTERVIEWS = {
+  BASIC: 'Basic',
+  BEHAVIORAL: 'Behavioral',
+  EXPERT: 'Expert',
+};
