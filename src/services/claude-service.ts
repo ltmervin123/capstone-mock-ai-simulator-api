@@ -7,12 +7,13 @@ import {
   type GenerateGreetingResponsePayload as GreetingData,
 } from '../zod-schemas/interview-zod-schema';
 import { GenerateInterviewFeedbackResult } from '../types/interview-type';
+import { extractText } from '../utils/anthropic-response-formatter';
 export const generateGreetingResponse = async (data: GreetingData) => {
   try {
     const prompt = Prompts.greeting(data);
-    const model = Claude.MODEL_LIST.greetingResponse;
+    const model = Claude.MODEL_LIST.CLAUDE_SONNET_4_5;
     const response = await Claude.chat(prompt, model);
-    const { greetingResponse }: { greetingResponse: string } = JSON.parse(response);
+    const { greetingResponse } = extractText<{ greetingResponse: string }>(response);
     return greetingResponse;
   } catch (error) {
     throw new ExternalServiceError(
@@ -24,9 +25,9 @@ export const generateGreetingResponse = async (data: GreetingData) => {
 export const generateFollowUpQuestion = async (data: GenerateFollowUpQuestionPayload) => {
   try {
     const prompt = Prompts.fallowUpQuestion(data);
-    const model = Claude.MODEL_LIST.questionGeneration;
+    const model = Claude.MODEL_LIST.CLAUDE_SONNET_4_5;
     const response = await Claude.chat(prompt, model);
-    const { followUpQuestion }: { followUpQuestion: string } = JSON.parse(response);
+    const { followUpQuestion } = extractText<{ followUpQuestion: string }>(response);
     return followUpQuestion;
   } catch (error) {
     throw new ExternalServiceError(
@@ -38,9 +39,10 @@ export const generateFollowUpQuestion = async (data: GenerateFollowUpQuestionPay
 export const generateInterviewFeedback = async (data: GenerateInterviewFeedbackPayload) => {
   try {
     const prompt = Prompts.feedback(data.conversation);
-    const model = Claude.MODEL_LIST.feedbackGeneration;
+    const model = Claude.MODEL_LIST.CLAUDE_SONNET_4_5;
     const response = await Claude.chat(prompt, model);
-    return JSON.parse(response) as GenerateInterviewFeedbackResult;
+
+    return extractText<GenerateInterviewFeedbackResult>(response);
   } catch (error) {
     throw new ExternalServiceError(
       `Error generating interview feedback from Claude AI [${(error as Error).message}]`
