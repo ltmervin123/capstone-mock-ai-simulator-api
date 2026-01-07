@@ -1,4 +1,4 @@
-import { TopInterviewPerformers } from './interview-type';
+import { TopStudent } from './interview-type';
 
 export type AdminDashboardStatsType = {
   totalVerifiedStudents: number;
@@ -7,5 +7,8 @@ export type AdminDashboardStatsType = {
   dailyNewPendingStudents: number;
   studentsCountsByProgram: Record<string, number>;
   authenticatedStudents: number;
-  topInterviewPerformers: TopInterviewPerformers[];
+  overallRanking: TopStudent[];
+  basicRanking: TopStudent[];
+  behavioralRanking: TopStudent[];
+  expertRanking: TopStudent[];
 };

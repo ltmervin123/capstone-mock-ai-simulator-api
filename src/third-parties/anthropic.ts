@@ -10,13 +10,14 @@ import { CONFIG } from '../utils/constant-value';
 type MODELS =
   | `claude-3-7-sonnet-20250219`
   | `claude-3-5-haiku-20241022`
-  | `claude-3-haiku-20240307`;
+  | `claude-3-haiku-20240307`
+  | 'claude-sonnet-4-5-20250929';
 
 export const MODEL_LIST = {
-  feedbackGeneration: 'claude-3-7-sonnet-20250219' as MODELS,
-  questionGeneration: 'claude-3-5-haiku-20241022' as MODELS,
-  greetingResponse: 'claude-3-haiku-20240307' as MODELS,
-  sanitization: 'claude-3-haiku-20240307' as MODELS,
+  CLAUDE_3_7_SONNET: 'claude-3-7-sonnet-20250219' as MODELS,
+  CLAUDE_3_5_HAIKU: 'claude-3-5-haiku-20241022' as MODELS,
+  CLAUDE_3_HAIKU: 'claude-3-haiku-20240307' as MODELS,
+  CLAUDE_SONNET_4_5: 'claude-sonnet-4-5-20250929' as MODELS,
 };
 
 const DEFAULT_MODEL = 'claude-3-5-haiku-20241022';

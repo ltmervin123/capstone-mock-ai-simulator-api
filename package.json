@@ -4,7 +4,7 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "node dist/app.js",
-    "dev": "nodemon",
+    "dev": "docker compose -p prepwise up -d && nodemon",
     "build": "tsc",
     "lint": "eslint src --ext .ts --fix",
     "format": "prettier --write . \"**/*.{ts,js,json,md}\""

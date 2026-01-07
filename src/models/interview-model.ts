@@ -12,7 +12,8 @@ import type {
   FilterOptions,
   InterviewPreview,
   InterviewAdminReportDocument,
-  TopInterviewPerformers,
+  TopStudent,
+  InterviewTypes,
 } from '../types/interview-type';
 import { DAILY_LABELS, MONTHLY_LABELS, WEEKLY_LABELS } from '../utils/date-labels';
 import { InterviewHistoryFilterOptions } from '../zod-schemas/interview-zod-schema';
@@ -40,12 +41,60 @@ interface InterviewModelInterface extends Model<InterviewDocumentType> {
   updateUserUnViewedInterviewCount(studentId: string, interviewId: string): Promise<void>;
   getInterviews(filterOptions: FilterOptions): Promise<InterviewPreview[]>;
   getAdminInterviewReports(interviewId: string): Promise<InterviewAdminReportDocument>;
-  getTopInterviewPerformers(): Promise<TopInterviewPerformers[]>;
+  getOverallRanking(): Promise<TopStudent[]>;
+  getRankingByInterviewType(interviewType: InterviewTypes): Promise<TopStudent[]>;
 }
 
-interviewSchema.statics.getTopInterviewPerformers = async function (): Promise<
-  TopInterviewPerformers[]
-> {
+interviewSchema.statics.getRankingByInterviewType = async function (
+  interviewType: InterviewTypes
+): Promise<TopStudent[]> {
+  return await this.aggregate([
+    {
+      $match: { interviewType: interviewType },
+    },
+    {
+      $group: {
+        _id: '$studentId',
+        averageScore: { $avg: '$scores.totalScore' },
+        totalInterviews: { $sum: 1 },
+      },
+    },
+    {
+      $lookup: {
+        from: 'students',
+        localField: '_id',
+        foreignField: '_id',
+        as: 'student',
+      },
+    },
+    { $unwind: '$student' },
+    {
+      $project: {
+        averageScore: { $round: ['$averageScore', 2] },
+        totalInterviews: 1,
+        student: {
+          firstName: '$student.firstName',
+          lastName: '$student.lastName',
+          middleName: '$student.middleName',
+          nameExtension: '$student.nameExtension',
+        },
+        program: '$student.program',
+      },
+    },
+    { $sort: { averageScore: -1 } },
+    {
+      $setWindowFields: {
+        sortBy: { averageScore: -1 },
+        output: {
+          rank: { $rank: {} },
+        },
+      },
+    },
+    { $limit: 10 },
+  ]);
+};
+
+interviewSchema.statics.getOverallRanking = async function (): Promise<TopStudent[]> {
   return await this.aggregate([
     {
       $group: {

@@ -9,6 +9,7 @@ import InterviewModel from '../models/interview-model';
 import QuestionConfigModel from '../models/question-config-model';
 import { parseFile } from '../utils/parse-file';
 import { BadRequestError } from '../utils/errors';
+import { extractText } from '../utils/anthropic-response-formatter';
 
 export const makeInterviewFeedback = async (
   studentId: string,
@@ -49,10 +50,12 @@ export const expertInterviewQuestions = async (
     numberOfQuestionToGenerate,
   });
 
-  const model = Claude.MODEL_LIST.questionGeneration;
+  const model = Claude.MODEL_LIST.CLAUDE_SONNET_4_5;
   const response = await Claude.chat(prompt, model);
-  const { isResumeValid, questions }: { questions?: string[]; isResumeValid?: boolean } =
-    JSON.parse(response);
+  const { isResumeValid, questions } = extractText<{
+    questions?: string[];
+    isResumeValid?: boolean;
+  }>(response);
 
   if (!isResumeValid) {
     throw new BadRequestError(
@@ -104,7 +107,7 @@ export const getQuestionConfig = async () => {
 
 export const sanitizedTranscription = async (transcription: string) => {
   const prompt = Prompt.sanitizeTranscription(transcription);
-  const model = Claude.MODEL_LIST.sanitization;
+  const model = Claude.MODEL_LIST.CLAUDE_3_HAIKU;
   const response = await Claude.chat(prompt, model);
   const parsedResponse = JSON.parse(response) as { sanitizedTranscription: string };
   return parsedResponse.sanitizedTranscription;

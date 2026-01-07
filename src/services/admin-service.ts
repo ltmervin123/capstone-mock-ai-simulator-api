@@ -10,9 +10,10 @@ import {
 import { getClientURL } from '../utils/url';
 import QueueService from '../queue';
 import { BehavioralQuestionSchema } from '../zod-schemas/behavioral-question-zod-schema';
-import { FilterOptions } from '../types/interview-type';
+import { FilterOptions, InterviewTypes } from '../types/interview-type';
 import { StudentFilterParams } from '../zod-schemas/admin-zod-schema';
 import { BadRequestError } from '../utils/errors';
+import { INTERVIEWS } from '../utils/constant-value';
 
 export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType> => {
   const [
@@ -22,7 +23,10 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     dailyNewPendingStudents,
     studentsCountsByProgram,
     authenticatedStudents,
-    topInterviewPerformers,
+    overallRanking,
+    basicRanking,
+    behavioralRanking,
+    expertRanking,
   ] = await Promise.all([
     StudentModel.getAllCountsOfVerifiedStudents(),
     StudentModel.getMonthlyIncrementedStudentCount(),
@@ -30,7 +34,10 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     StudentModel.getDailyIncreasedOfPendingStudents(),
     StudentModel.getCountsOfStudentsByProgram(),
     StudentModel.getCountsOfAuthenticatedStudents(),
-    InterviewModel.getTopInterviewPerformers(),
+    InterviewModel.getOverallRanking(),
+    InterviewModel.getRankingByInterviewType(INTERVIEWS.BASIC as InterviewTypes),
+    InterviewModel.getRankingByInterviewType(INTERVIEWS.BEHAVIORAL as InterviewTypes),
+    InterviewModel.getRankingByInterviewType(INTERVIEWS.EXPERT as InterviewTypes),
   ]);
 
   return {
@@ -40,7 +47,10 @@ export const getAdminDashboardStats = async (): Promise<AdminDashboardStatsType>
     dailyNewPendingStudents,
     studentsCountsByProgram,
     authenticatedStudents,
-    topInterviewPerformers,
+    overallRanking,
+    basicRanking,
+    behavioralRanking,
+    expertRanking,
   };
 };
 
